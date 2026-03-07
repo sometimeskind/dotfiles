@@ -1,0 +1,41 @@
+# Claude Code project-local settings
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets — never commit these
+*.env
+.env.*
+*.pem
+*.key
+id_rsa
+id_ed25519
+.secrets
+
+# Claude runtime data — not config
+.claude/history.jsonl
+.claude/.credentials.json
+.claude/cache/
+.claude/debug/
+.claude/file-history/
+.claude/paste-cache/
+.claude/plans/
+.claude/projects/
+.claude/session-env/
+.claude/shell-snapshots/
+.claude/stats-cache.json
+.claude/tasks/
+.claude/telemetry/
+.claude/todos/
+.claude/usage-data/
+.claude/backups/
+.claude/ide/
+.claude/mcp-needs-auth-cache.json
