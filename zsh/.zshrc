@@ -117,8 +117,8 @@ alias flatup="flatpak update -y"
 alias yolo="aptup && brewup && flatup && pipxup"
 
 export EDITOR="/usr/bin/code"
-# Load secrets from 1Password (silent no-op if op is unavailable or locked)
-if command -v op &>/dev/null && op whoami &>/dev/null 2>&1; then
+# Load secrets from 1Password
+if command -v op &>/dev/null; then
   export GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token")
 fi
 
