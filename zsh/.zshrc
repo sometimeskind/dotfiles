@@ -117,9 +117,10 @@ alias flatup="flatpak update -y"
 alias yolo="aptup && brewup && flatup && pipxup"
 
 export EDITOR="/usr/bin/code"
-# Secrets must not be stored here. Load from ~/.secrets (gitignored) or a secret manager.
-# export GITHUB_PERSONAL_ACCESS_TOKEN="..."
-[[ -f ~/.secrets ]] && source ~/.secrets
+# Load secrets from 1Password (silent no-op if op is unavailable or locked)
+if command -v op &>/dev/null && op whoami &>/dev/null 2>&1; then
+  export GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token")
+fi
 
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 alias k=kubectl
