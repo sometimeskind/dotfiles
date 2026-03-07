@@ -21,11 +21,11 @@ git clone <repo-url> ~/src/dotfiles
 cd ~/src/dotfiles
 
 # 3. Stow the packages you want
-stow --dir=~/src/dotfiles --target=~ zsh
-stow --dir=~/src/dotfiles --target=~ ghostty
-stow --dir=~/src/dotfiles --target=~ starship
+stow --dir=$HOME/src/dotfiles --target=$HOME zsh
+stow --dir=$HOME/src/dotfiles --target=$HOME ghostty
+stow --dir=$HOME/src/dotfiles --target=$HOME starship
 # ...or all at once:
-stow --dir=~/src/dotfiles --target=~ */
+stow --dir=$HOME/src/dotfiles --target=$HOME */
 ```
 
 If a target file already exists (e.g. `~/.zshrc`), Stow will refuse to overwrite it. Back it up first:
@@ -43,7 +43,7 @@ mkdir -p ~/src/dotfiles/<package>/path/to/
 mv ~/path/to/file ~/src/dotfiles/<package>/path/to/file
 
 # Re-stow to create the symlink
-stow --dir=~/src/dotfiles --target=~ <package>
+stow --dir=$HOME/src/dotfiles --target=$HOME <package>
 
 # Commit
 git add <package>/
@@ -53,7 +53,7 @@ git commit -m "feat: add <package> config"
 ## Removing a package
 
 ```bash
-stow --dir=~/src/dotfiles --target=~ -D <package>    # removes symlinks, leaves real files untouched
+stow --dir=$HOME/src/dotfiles --target=$HOME -D <package>    # removes symlinks, leaves real files untouched
 ```
 
 ## Package layout
@@ -88,5 +88,5 @@ export SOME_API_KEY="..."
 ```bash
 cd ~/src/dotfiles
 git pull
-stow --dir=~/src/dotfiles --target=~ */    # re-stow to pick up any new symlinks
+stow --dir=$HOME/src/dotfiles --target=$HOME */    # re-stow to pick up any new symlinks
 ```
