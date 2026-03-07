@@ -73,15 +73,17 @@ Add new packages following the same pattern.
 
 ## Secrets
 
-Never put secrets in dotfiles. Use `~/.secrets` for any tokens or credentials:
+Never put secrets in dotfiles. Use the [1Password CLI](https://developer.1password.com/docs/cli/) (`op`) to inject secrets at runtime instead of storing them in plaintext files.
 
 ```bash
-# ~/.secrets  (chmod 600, never committed)
-export GITHUB_PERSONAL_ACCESS_TOKEN="..."
-export SOME_API_KEY="..."
+# Fetch a secret inline
+export GITHUB_TOKEN=$(op read "op://Private/GitHub PAT/credential")
+
+# Or use op run to inject secrets into a process environment
+op run --env-file=.env.tpl -- some-command
 ```
 
-`.zshrc` sources `~/.secrets` automatically if the file exists. `~/.secrets` is in `.gitignore`.
+`.zshrc` loads secrets from 1Password automatically on shell start (requires `op` to be installed and signed in). Avoid using `~/.secrets` for new machines.
 
 ## Updating
 
