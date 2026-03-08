@@ -20,7 +20,10 @@ sudo apt install stow        # Debian/Ubuntu
 git clone <repo-url> ~/src/dotfiles
 cd ~/src/dotfiles
 
-# 3. Stow the packages you want
+# 3. Install git hooks (runs lint/validation on every commit)
+bash scripts/install-hooks.sh
+
+# 4. Stow the packages you want
 stow --dir=$HOME/src/dotfiles --target=$HOME zsh
 stow --dir=$HOME/src/dotfiles --target=$HOME ghostty
 stow --dir=$HOME/src/dotfiles --target=$HOME starship
