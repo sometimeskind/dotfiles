@@ -145,6 +145,14 @@ When encountering an obstacle, do not use destructive actions as a shortcut. Ide
 
 ---
 
+## Shell Command Safety
+
+- **Never use unnecessary quotation marks in shell commands.** Quoted strings (especially with `"..."`) can hide variable expansion and flag-like content, which triggers permission prompts every time.
+- **No visual separators inside quoted strings.** Never use sequences of dashes or similar decorators (e.g. `"-----"`) in shell commands or arguments.
+- Keep shell commands simple and unquoted where possible. Use temp files or scripts instead of complex quoting when arguments are non-trivial.
+
+---
+
 ## Secrets
 
 Never commit plaintext secrets. Use the project's designated secret management mechanism (sealed secrets, Azure Key Vault, environment-specific secret stores, etc.). When in doubt, ask.
