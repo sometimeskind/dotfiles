@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal Linux tooling configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal tooling configuration for Linux and macOS, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## How it works
 
@@ -9,6 +9,8 @@ Each top-level directory is a **Stow package** — a folder whose internal struc
 Example: `zsh/.zshrc` becomes `~/.zshrc` (symlink).
 
 ## Setup on a new machine
+
+### Linux
 
 ```bash
 # 1. Install GNU Stow
@@ -30,6 +32,35 @@ stow --dir=$HOME/src/dotfiles --target=$HOME starship
 # ...or all at once:
 stow --dir=$HOME/src/dotfiles --target=$HOME */
 ```
+
+### macOS
+
+```bash
+# 1. Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install GNU Stow
+brew install stow
+
+# 3. Clone this repo
+git clone <repo-url> ~/src/dotfiles
+cd ~/src/dotfiles
+
+# 4. Install git hooks
+bash scripts/install-hooks.sh
+
+# 5. Stow the packages you want
+stow --dir=$HOME/src/dotfiles --target=$HOME zsh
+stow --dir=$HOME/src/dotfiles --target=$HOME starship
+# ...or all at once:
+stow --dir=$HOME/src/dotfiles --target=$HOME */
+```
+
+> **Note:** Some configs contain Linux-specific paths that need adjusting on macOS:
+>
+> - `zsh/.zshrc` — hardcodes `/home/linuxbrew/` (Homebrew prefix on macOS is `/opt/homebrew`), `/home/tom/` (your macOS username differs), and `/usr/bin/code` (VS Code path on macOS). Edit these after stowing.
+> - `ghostty` — Ghostty is available on macOS; no changes needed.
+> - `starship` — works on macOS without changes.
 
 If a target file already exists (e.g. `~/.zshrc`), Stow will refuse to overwrite it. Back it up first:
 
