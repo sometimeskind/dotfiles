@@ -11,9 +11,18 @@ alias flatup="flatpak update -y"
 alias yolo="aptup && brewup && flatup && pipxup"
 
 export EDITOR="/usr/bin/code"
-# Load secrets from 1Password
+
+# Lazy-load secrets from 1Password before the first command
 if command -v op &>/dev/null; then
-  export GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token")
+  _op_secrets_loaded=false
+  _load_op_secrets() {
+    if ! $_op_secrets_loaded; then
+      _op_secrets_loaded=true
+      export GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null)
+    fi
+  }
+  autoload -U add-zsh-hook
+  add-zsh-hook preexec _load_op_secrets
 fi
 
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh) && compdef k=kubectl
