@@ -18,14 +18,15 @@ if command -v op &>/dev/null; then
   _load_op_secrets() {
     if ! $_op_secrets_loaded; then
       _op_secrets_loaded=true
-      export GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null)
+      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null)
+      export GITHUB_PERSONAL_ACCESS_TOKEN
     fi
   }
   autoload -U add-zsh-hook
   add-zsh-hook preexec _load_op_secrets
 fi
 
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh) && compdef k=kubectl
+command -v kubectl &>/dev/null && source <(kubectl completion zsh) && compdef k=kubectl
 alias k=kubectl
 
 export NVM_DIR="$HOME/.nvm"
