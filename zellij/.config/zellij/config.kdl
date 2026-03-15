@@ -1,0 +1,39 @@
+// Zellij config — install: brew install zellij
+// Docs: https://zellij.dev/documentation/
+
+// Keep session alive on force-close — essential for SSH use.
+// Without this, closing the terminal would destroy the session.
+on_force_close "detach"
+
+// Status bar is visible by default — good while learning keybinds.
+// To go minimal later, uncomment the two lines below:
+pane_frames false
+
+// Theme matching Ghostty's Argonaut colour scheme
+theme "argonaut"
+
+themes {
+    argonaut {
+        fg "#fffaf4"
+        bg "#1a1a1a"
+        black "#232323"
+        red "#ff000f"
+        green "#8ce10b"
+        yellow "#ffb900"
+        blue "#008df8"
+        magenta "#6d43a6"
+        cyan "#00d8eb"
+        white "#ffffff"
+        orange "#f37f00"
+    }
+}
+
+// Custom keybindings — iTerm2-style splits added to Normal mode.
+// Alt+D → split right, Alt+Shift+D → split down.
+// These do not conflict with any Zellij defaults.
+keybinds {
+    normal {
+        bind "Alt d" { NewPane "Right"; }
+        bind "Alt D" { NewPane "Down"; }
+    }
+}
