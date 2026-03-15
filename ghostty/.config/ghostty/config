@@ -29,6 +29,21 @@ font-family = MesloLGS Nerd Font Mono
 font-size = 12
 background-opacity = 0.85
 theme = Argonaut
+
+# ── Zellij pane ownership ─────────────────────────────────────────────────────
+# Zellij owns all splits and tabs. Ghostty's native splits are disabled to
+# avoid accidental nesting (Ghostty panes die on window close; Zellij panes
+# persist across SSH disconnects).
+
+# Hide the tab bar on Linux/GTK — Zellij provides its own tab UI.
+# On macOS the tab bar only appears when >1 tab exists, so this isn't needed.
+gtk-tabs-location = hidden
+
+# Unbind Ghostty's native split and new-tab shortcuts.
+# The exact defaults were verified via: ghostty +show-config --default --docs
+keybind = ctrl+shift+o=unbind
+keybind = ctrl+shift+e=unbind
+keybind = ctrl+shift+t=unbind
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.
