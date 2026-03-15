@@ -1,0 +1,37 @@
+directory: ~/Music/library
+library: ~/.config/beets/library.db
+
+ui:
+  color: yes
+
+import:
+  quiet: yes
+  copy: yes
+  log: ~/.config/beets/import.log
+  duplicate_action: skip
+
+match:
+  strong_rec_thresh: 0.10   # auto-accept threshold; below this = skipped to quarantine
+
+paths:
+  default: $albumartist/$album/$track - $title
+  singleton: $albumartist/$album/$track - $title
+  comp: Various Artists/$album/$track - $title
+
+plugins: fromfilename fetchart embedart scrub duplicates smartplaylist
+
+smartplaylist:
+  playlist_dir: ~/Music/playlists
+  relative_to: ~/Music/playlists
+  playlists:
+    - name: spotify-likes.m3u
+      query: source:spotdl
+
+fetchart:
+  auto: yes
+
+embedart:
+  auto: yes
+
+scrub:
+  auto: yes

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: music-bulk-import <source-directory>" >&2
+    exit 1
+fi
+
+SOURCE="$1"
+
+if [[ ! -d "$SOURCE" ]]; then
+    echo "Error: directory not found: $SOURCE" >&2
+    exit 1
+fi
+
+QUARANTINE=~/Music/quarantine
+AUDIO_EXTS="mp3|flac|ogg|opus|m4a|aac|wav|wma|aiff|ape|mpc"
+
+echo "==> Bulk importing from: $SOURCE"
+beet import --quiet "$SOURCE" || true
+
+echo "==> Quarantining skipped files..."
+pre_q=$(find "$QUARANTINE" -type f | wc -l)
+
+find "$SOURCE" -type f | grep -Ei "\.($AUDIO_EXTS)$" | while read -r f; do
+    echo "  Quarantining: $f"
+    mv "$f" "$QUARANTINE/"
+done
+
+post_q=$(find "$QUARANTINE" -type f | wc -l)
+quarantined=$((post_q - pre_q))
+
+echo ""
+echo "--- Summary ---"
+echo "Quarantined : $quarantined file(s) → $QUARANTINE"
+echo "Log         : ~/.config/beets/import.log"
+echo ""
+echo "Review quarantined files with Picard, then run 'music-ingest' to re-import."

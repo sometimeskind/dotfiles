@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> Creating Music directory structure..."
+mkdir -p ~/Music/inbox/spotdl ~/Music/library ~/Music/quarantine ~/Music/playlists
+echo "    ~/Music/inbox/spotdl"
+echo "    ~/Music/library"
+echo "    ~/Music/quarantine"
+echo "    ~/Music/playlists"
+
+echo ""
+printf "Enter your Spotify liked songs playlist URL: "
+read -r playlist_url
+
+if [[ -z "$playlist_url" ]]; then
+    echo "Error: playlist URL required" >&2
+    exit 1
+fi
+
+SPOTDL_FILE=~/Music/inbox/spotdl/favorites.spotdl
+COOKIE_FILE=~/.config/spotdl/cookies.txt
+
+SPOTDL_OPTS=()
+if [[ -f "$COOKIE_FILE" ]]; then
+    SPOTDL_OPTS+=(--cookie-file "$COOKIE_FILE")
+    echo "==> Using YouTube Premium cookies: $COOKIE_FILE"
+fi
+
+echo ""
+echo "==> Initialising spotdl sync file..."
+spotdl "${SPOTDL_OPTS[@]}" save "$playlist_url" --save-file "$SPOTDL_FILE"
+
+echo ""
+echo "Setup complete."
+echo "  Sync file : $SPOTDL_FILE"
+echo ""
+echo "YouTube Premium (higher quality M4A downloads):"
+echo "  1. Install the 'Get cookies.txt LOCALLY' browser extension"
+echo "  2. Open https://music.youtube.com and log in"
+echo "  3. Export cookies in Netscape format"
+echo "  4. Save to: $COOKIE_FILE"
+echo "  spotdl will detect and use the file automatically."
+echo ""
+echo "  Run 'music-ingest' to download and import your library."
