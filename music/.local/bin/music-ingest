@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SPOTDL_DIR=~/Music/inbox/spotdl
+QUARANTINE=~/Music/quarantine
+PLAYLISTS=~/Music/playlists
+COOKIE_FILE=~/.config/spotdl/cookies.txt
+
+if [[ ! -f "$COOKIE_FILE" ]]; then
+    echo "Error: YouTube Premium cookies not found at $COOKIE_FILE" >&2
+    echo "See README for setup instructions." >&2
+    exit 1
+fi
+
+SPOTDL_OPTS=(--cookie-file "$COOKIE_FILE")
+
+audio_files_in() {
+    find "$1" -maxdepth "${2:-1}" -type f | grep -Ei "\.(mp3|flac|ogg|opus|m4a|aac|wav|wma|aiff|ape|mpc)$" || true
+}
+
+for spotdl_file in "$SPOTDL_DIR"/*.spotdl; do
+    [[ -e "$spotdl_file" ]] || { echo "No .spotdl files found in $SPOTDL_DIR" >&2; exit 1; }
+    name=$(basename "$spotdl_file" .spotdl)
+    echo "==> Syncing playlist: $name"
+    mkdir -p "$SPOTDL_DIR/$name"
+    spotdl "${SPOTDL_OPTS[@]}" sync "$spotdl_file" --output "$SPOTDL_DIR/$name"
+
+    echo "==> Importing $name into beets..."
+    beet import --quiet --set source="$name" "$SPOTDL_DIR/$name" || true
+
+    echo "==> Generating playlist: $PLAYLISTS/$name.m3u"
+    mkdir -p "$PLAYLISTS"
+    beet ls -f '$path' source:"$name" \
+        | while IFS= read -r p; do
+            realpath --relative-to="$(realpath "$PLAYLISTS")" "$p"
+          done \
+        > "$PLAYLISTS/$name.m3u"
+
+    echo "==> Quarantining skipped files from $name..."
+    audio_files_in "$SPOTDL_DIR/$name" 10 | while read -r f; do
+        mv "$f" "$QUARANTINE/"
+    done
+done
+
+echo ""
+echo "==> Processing inbox..."
+music-import
+
+echo ""
+echo "==> Refreshing library metadata..."
+beet update 2>&1 || true

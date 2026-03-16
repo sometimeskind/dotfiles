@@ -1,0 +1,31 @@
+directory: ~/Music/library
+library: ~/.config/beets/library.db
+
+ui:
+  color: yes
+
+import:
+  quiet: yes
+  move: yes
+  log: ~/.config/beets/import.log
+  duplicate_action: skip
+
+match:
+  strong_rec_thresh: 0.05   # distance threshold; lower = stricter (0 = perfect match)
+                             # 0.05 means only very close MusicBrainz matches are auto-accepted
+
+paths:
+  default: $albumartist/$album/$track - $title
+  singleton: $albumartist/$album/$track - $title
+  comp: Various Artists/$album/$track - $title
+
+plugins: fromfilename fetchart embedart scrub duplicates
+
+fetchart:
+  auto: yes
+
+embedart:
+  auto: yes
+
+scrub:
+  auto: yes
