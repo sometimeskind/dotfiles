@@ -17,3 +17,9 @@ This is a personal dotfiles repo managed with GNU Stow.
 ## Workflow
 
 See README.md for the full setup and usage workflow.
+
+Use `make stow`, `make unstow`, and `make restow` (with optional `PKG=<name>`) rather than invoking `stow` directly.
+
+## Branch and PR
+
+Always create a feature branch and open a PR for every change — no direct commits to `main`.

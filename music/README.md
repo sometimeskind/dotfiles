@@ -47,7 +47,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ```bash
 cd ~/src/dotfiles
-stow beets spotdl music
+make stow PKG=beets
+make stow PKG=spotdl
+make stow PKG=music
 ```
 
 Ensure the scripts are executable:
