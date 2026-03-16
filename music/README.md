@@ -9,7 +9,7 @@ Three dotfiles packages work together:
 | Package | Stow target | Purpose |
 |---------|-------------|---------|
 | `beets` | `~/.config/beets/config.yaml` | Library management, tag fixing |
-| `spotdl` | `~/.config/spotdl/config.json` | Download quality settings |
+| `spotdl` | `~/.spotdl/config.json` | Download quality settings |
 | `music` | `~/.local/bin/music-{setup,ingest,import}` | Pipeline scripts |
 
 ---
@@ -226,7 +226,7 @@ dotfiles/
     .config/beets/
       config.yaml          ← beets config; plugins, paths, match threshold
   spotdl/
-    .config/spotdl/
+    .spotdl/
       config.json          ← format: m4a, bitrate: disable
   music/
     .local/bin/
@@ -234,6 +234,8 @@ dotfiles/
       music-ingest         ← daily sync; download → import → m3u → quarantine → prune
       music-import         ← import inbox drops; called by music-ingest, also standalone
 
+~/.spotdl/
+  config.json              ← symlink to dotfiles; format: m4a, bitrate: disable
 ~/.config/spotdl/
   cookies.txt              ← YouTube Premium cookies (required; not committed)
 ~/Music/
