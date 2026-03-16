@@ -10,7 +10,7 @@ Three dotfiles packages work together:
 |---------|-------------|---------|
 | `beets` | `~/.config/beets/config.yaml` | Library management, tag fixing |
 | `spotdl` | `~/.config/spotdl/config.json` | Download quality settings |
-| `music` | `~/.local/bin/music-{setup,ingest,bulk-import}` | Pipeline scripts |
+| `music` | `~/.local/bin/music-{setup,ingest,import}` | Pipeline scripts |
 
 ---
 
@@ -53,7 +53,7 @@ stow beets spotdl music
 Ensure the scripts are executable:
 
 ```bash
-chmod +x ~/.local/bin/music-setup ~/.local/bin/music-ingest ~/.local/bin/music-bulk-import
+chmod +x ~/.local/bin/music-setup ~/.local/bin/music-ingest ~/.local/bin/music-import
 ```
 
 ### 2. Set up YouTube Premium cookies (required)
@@ -105,34 +105,22 @@ music-ingest
 For **each** `.spotdl` file found in `~/Music/inbox/spotdl/`, runs the full pipeline:
 
 1. `spotdl sync` — downloads any new tracks into `~/Music/inbox/spotdl/<name>/`
-2. `beet import --set source=<name>` — queries MusicBrainz, auto-accepts high-confidence matches, copies files into `~/Music/library/`
+2. `beet import --set source=<name>` — queries MusicBrainz, auto-accepts high-confidence matches, **moves** files into `~/Music/library/` (one copy on disk)
 3. Generates `~/Music/playlists/<name>.m3u` with relative paths (required for Navidrome)
 4. Quarantine sweep — audio files left in the download dir (beets skipped them) are moved to `~/Music/quarantine/`
 
 After all playlists are processed:
 
-5. `beet import` — imports anything manually dropped into `~/Music/inbox/`
+5. `music-import` — imports anything manually dropped into `~/Music/inbox/`
 6. `beet update` / `beet remove` — prunes library entries for files that no longer exist
 
 ### Manual file adds
 
-Drop any audio file into `~/Music/inbox/`, then run `music-ingest`. It will be imported and tagged like any other file. It will not appear in any playlist (playlists only include tracks tagged with a source matching a `.spotdl` name).
+Drop any audio file into `~/Music/inbox/`, then run `music-import` (or `music-ingest` for a full sync). The file will be imported, tagged, and moved to `~/Music/library/`. It will not appear in any playlist.
 
----
-
-## ingest vs bulk-import
-
-| | `music-ingest` | `music-bulk-import` |
-|---|---|---|
-| Use case | Daily driver — sync playlists | One-time migration of existing files |
-| Downloads | Yes (via spotdl) | No |
-| Source tagging | Yes (`source=<playlist-name>`) | No |
-| Playlist generation | Yes (`.m3u` per playlist) | No |
-| Quarantine | Yes | Yes |
-| Input | `~/Music/inbox/spotdl/*.spotdl` | Any directory you specify |
-| Audio formats | All common formats | MP3 only |
-
-Use `music-bulk-import` once to migrate an existing MP3 collection. Use `music-ingest` for everything after that.
+```bash
+music-import
+```
 
 ---
 
@@ -145,7 +133,7 @@ To process them:
 1. Open `~/Music/quarantine/` in **MusicBrainz Picard**
 2. Look up and fix tags manually
 3. Save the files to `~/Music/inbox/` (not back to quarantine)
-4. Run `music-ingest` — beets will re-attempt import with the corrected tags
+4. Run `music-import` — beets will re-attempt import with the corrected tags
 
 ---
 
@@ -155,7 +143,7 @@ To process them:
 
 `config.yaml` sets `strong_rec_thresh: 0.05`. Beets uses a **distance** score internally where 0 = perfect match and higher = worse:
 
-- Distance ≤ 0.05 → auto-accepted, file copied to `~/Music/library/`
+- Distance ≤ 0.05 → auto-accepted, file moved to `~/Music/library/`
 - Distance > 0.05 → skipped, file left in inbox, quarantined by the script
 
 0.05 is strict — only very close MusicBrainz matches pass automatically. Raise to 0.10 if too many valid tracks end up in quarantine.
@@ -240,7 +228,7 @@ dotfiles/
     .local/bin/
       music-setup          ← add a playlist (run once per playlist)
       music-ingest         ← daily sync; download → import → m3u → quarantine → prune
-      music-bulk-import    ← one-time import of an existing MP3 collection
+      music-import         ← import inbox drops; called by music-ingest, also standalone
 
 ~/.config/spotdl/
   cookies.txt              ← YouTube Premium cookies (required; not committed)
@@ -248,6 +236,7 @@ dotfiles/
   inbox/spotdl/
     <name>.spotdl          ← spotdl sync state (do not delete)
     <name>/                ← spotdl download dir per playlist
+  inbox/                   ← drop albums here; picked up by music-import
   library/                 ← beets-managed files
   quarantine/              ← awaiting manual tag fixes
   playlists/               ← generated .m3u files (one per playlist)

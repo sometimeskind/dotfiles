@@ -6,7 +6,7 @@ ui:
 
 import:
   quiet: yes
-  copy: yes
+  move: yes
   log: ~/.config/beets/import.log
   duplicate_action: skip
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INBOX=~/Music/inbox
 SPOTDL_DIR=~/Music/inbox/spotdl
 QUARANTINE=~/Music/quarantine
 PLAYLISTS=~/Music/playlists
@@ -18,8 +17,6 @@ SPOTDL_OPTS=(--cookie-file "$COOKIE_FILE")
 audio_files_in() {
     find "$1" -maxdepth "${2:-1}" -type f | grep -Ei "\.(mp3|flac|ogg|opus|m4a|aac|wav|wma|aiff|ape|mpc)$" || true
 }
-
-pre_q=$(find "$QUARANTINE" -type f | wc -l)
 
 for spotdl_file in "$SPOTDL_DIR"/*.spotdl; do
     [[ -e "$spotdl_file" ]] || { echo "No .spotdl files found in $SPOTDL_DIR" >&2; exit 1; }
@@ -45,24 +42,13 @@ for spotdl_file in "$SPOTDL_DIR"/*.spotdl; do
     done
 done
 
-echo "==> Importing manual drops from inbox..."
-beet import --quiet "$INBOX" || true
+echo ""
+echo "==> Processing inbox..."
+music-import
 
-echo "==> Quarantining skipped manual drops..."
-audio_files_in "$INBOX" 1 | while read -r f; do
-    mv "$f" "$QUARANTINE/"
-done
-
+echo ""
 echo "==> Pruning library entries for removed tracks..."
 beet update -y 2>&1 || true
 removed_output=$(beet remove --yes -d 2>&1 || true)
 removed=$(echo "$removed_output" | grep -c "Removed" || true)
-
-post_q=$(find "$QUARANTINE" -type f | wc -l)
-quarantined=$((post_q - pre_q))
-
-echo ""
-echo "--- Summary ---"
-echo "Quarantined : $quarantined file(s) → $QUARANTINE"
 echo "Removed     : $removed library entry/entries"
-echo "Log         : ~/.config/beets/import.log"
