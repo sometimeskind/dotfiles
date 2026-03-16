@@ -24,16 +24,23 @@
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
-    "greptile@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "learning-output-style@claude-plugins-official": true
+    "learning-output-style@claude-plugins-official": true,
+    "warden@claude-warden": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-warden": {
+      "source": {
+        "source": "github",
+        "repo": "banyudu/claude-warden"
+      }
+    }
   }
 }
