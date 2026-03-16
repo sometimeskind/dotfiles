@@ -159,6 +159,38 @@ Never commit plaintext secrets. Use the project's designated secret management m
 
 ---
 
+## Pinning Versions
+
+Never pin a container image version or package version from memory. Always look up the current stable release before pinning.
+
+**GitHub-hosted projects** (covers most Kubernetes ecosystem tooling):
+```bash
+gh release list --repo <org/repo> --limit 5
+```
+Pick the most recent non-prerelease tag.
+
+**Docker Hub images** — check whether the project has a GitHub repo and use `gh release list` there. Most official images (e.g. `homeassistant/home-assistant`, `linuxserver/*`) have a corresponding GitHub repo with releases.
+
+**If the latest stable version is ambiguous or hard to determine** (e.g. no GitHub repo, irregular tagging scheme, unclear which tag is "stable"): ask the user before pinning rather than guessing.
+
+---
+
+## MCP Tools
+
+### context7 — Up-to-date Library Documentation
+When writing code or configuration that uses an external library, API, or framework, use context7 to fetch current documentation before writing. This prevents writing against stale API specs or deprecated fields.
+
+**How:** Call `resolve-library-id("<library-name>")` first, then `get-library-docs(<id>, "<topic>")`.
+
+**When to use:**
+- Before writing manifests for Kubernetes APIs, Helm chart values, or CRD schemas
+- Before implementing a feature that calls an external SDK or framework
+- When uncertain whether a field, annotation, or option still exists in the current version
+
+**When not to use:** For well-known, stable APIs you already know (e.g. basic git commands, standard bash). Use context7 for external libraries — especially those that upgrade frequently.
+
+---
+
 ## Commit Style
 
 - One logical change per commit.
