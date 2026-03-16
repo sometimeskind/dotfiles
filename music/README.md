@@ -112,7 +112,9 @@ For **each** `.spotdl` file found in `~/Music/inbox/spotdl/`, runs the full pipe
 After all playlists are processed:
 
 5. `music-import` — imports anything manually dropped into `~/Music/inbox/`
-6. `beet update` / `beet remove` — prunes library entries for files that no longer exist
+6. `beet update` — refreshes library metadata and detects moved files
+
+> **Note:** `beet update` does not remove entries for deleted files. To prune the library manually after deleting files from disk, run `beet remove <query>` with a specific query (e.g. `beet remove artist:OldArtist`). Avoid running `beet remove` with no query — it matches all items.
 
 ### Manual file adds
 

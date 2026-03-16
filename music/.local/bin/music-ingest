@@ -47,8 +47,5 @@ echo "==> Processing inbox..."
 music-import
 
 echo ""
-echo "==> Pruning library entries for removed tracks..."
-beet update -y 2>&1 || true
-removed_output=$(beet remove --yes -d 2>&1 || true)
-removed=$(echo "$removed_output" | grep -c "Removed" || true)
-echo "Removed     : $removed library entry/entries"
+echo "==> Refreshing library metadata..."
+beet update 2>&1 || true
