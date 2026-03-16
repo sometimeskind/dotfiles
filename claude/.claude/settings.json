@@ -12,9 +12,28 @@
           {
             "type": "command",
             "command": "/home/tom/.claude/hooks/block-dash-separators.sh"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
           }
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "explanatory-output-style@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": true,
+    "greptile@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "learning-output-style@claude-plugins-official": true
   }
 }
