@@ -8,6 +8,20 @@ Each top-level directory is a **Stow package** — a folder whose internal struc
 
 Example: `zsh/.zshrc` becomes `~/.zshrc` (symlink).
 
+## Makefile
+
+The repo includes a `Makefile` that wraps the verbose `stow --dir=... --target=...` flags:
+
+```bash
+make stow              # stow all packages
+make stow PKG=music    # stow one package
+make unstow PKG=zsh    # remove symlinks for one package
+make restow            # restow everything (useful after a git pull)
+make help              # list all targets
+```
+
+All targets accept an optional `PKG=<name>` to act on a single package instead of all of them.
+
 ## Setup on a new machine
 
 ### Linux
@@ -26,11 +40,11 @@ cd ~/src/dotfiles
 bash scripts/install-hooks.sh
 
 # 4. Stow the packages you want
-stow --dir=$HOME/src/dotfiles --target=$HOME zsh
-stow --dir=$HOME/src/dotfiles --target=$HOME ghostty
-stow --dir=$HOME/src/dotfiles --target=$HOME starship
+make stow PKG=zsh
+make stow PKG=ghostty
+make stow PKG=starship
 # ...or all at once:
-stow --dir=$HOME/src/dotfiles --target=$HOME */
+make stow
 ```
 
 ### macOS
@@ -50,10 +64,10 @@ cd ~/src/dotfiles
 bash scripts/install-hooks.sh
 
 # 5. Stow the packages you want
-stow --dir=$HOME/src/dotfiles --target=$HOME zsh
-stow --dir=$HOME/src/dotfiles --target=$HOME starship
+make stow PKG=zsh
+make stow PKG=starship
 # ...or all at once:
-stow --dir=$HOME/src/dotfiles --target=$HOME */
+make stow
 ```
 
 > **Note:** Some configs contain Linux-specific paths that need adjusting on macOS:
@@ -77,7 +91,7 @@ mkdir -p ~/src/dotfiles/<package>/path/to/
 mv ~/path/to/file ~/src/dotfiles/<package>/path/to/file
 
 # Re-stow to create the symlink
-stow --dir=$HOME/src/dotfiles --target=$HOME <package>
+make stow PKG=<package>
 
 # Commit
 git add <package>/
@@ -87,7 +101,7 @@ git commit -m "feat: add <package> config"
 ## Removing a package
 
 ```bash
-stow --dir=$HOME/src/dotfiles --target=$HOME -D <package>    # removes symlinks, leaves real files untouched
+make unstow PKG=<package>    # removes symlinks, leaves real files untouched
 ```
 
 ## Package layout
@@ -124,5 +138,5 @@ op run --env-file=.env.tpl -- some-command
 ```bash
 cd ~/src/dotfiles
 git pull
-stow --dir=$HOME/src/dotfiles --target=$HOME */    # re-stow to pick up any new symlinks
+make restow    # re-stow to pick up any new symlinks
 ```
