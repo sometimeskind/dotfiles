@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+COOKIE_FILE=~/.config/spotdl/cookies.txt
+
+if [[ ! -f "$COOKIE_FILE" ]]; then
+    echo "Error: YouTube Premium cookies not found at $COOKIE_FILE" >&2
+    echo "See README for setup instructions." >&2
+    exit 1
+fi
+
 echo "==> Creating Music directory structure..."
 mkdir -p ~/Music/inbox/spotdl ~/Music/library ~/Music/quarantine ~/Music/playlists
 echo "    ~/Music/inbox/spotdl"
@@ -9,7 +17,16 @@ echo "    ~/Music/quarantine"
 echo "    ~/Music/playlists"
 
 echo ""
-printf "Enter your Spotify liked songs playlist URL: "
+printf "Enter a name for this playlist (slug, e.g. liked-songs): "
+read -r playlist_name
+
+if [[ -z "$playlist_name" ]]; then
+    echo "Error: playlist name required" >&2
+    exit 1
+fi
+
+echo ""
+printf "Enter the Spotify URL for '%s': " "$playlist_name"
 read -r playlist_url
 
 if [[ -z "$playlist_url" ]]; then
@@ -17,28 +34,20 @@ if [[ -z "$playlist_url" ]]; then
     exit 1
 fi
 
-SPOTDL_FILE=~/Music/inbox/spotdl/favorites.spotdl
-COOKIE_FILE=~/.config/spotdl/cookies.txt
+SPOTDL_DIR=~/Music/inbox/spotdl
+SPOTDL_FILE="$SPOTDL_DIR/$playlist_name.spotdl"
 
-SPOTDL_OPTS=()
-if [[ -f "$COOKIE_FILE" ]]; then
-    SPOTDL_OPTS+=(--cookie-file "$COOKIE_FILE")
-    echo "==> Using YouTube Premium cookies: $COOKIE_FILE"
-fi
+mkdir -p "$SPOTDL_DIR/$playlist_name"
 
 echo ""
-echo "==> Initialising spotdl sync file..."
-spotdl "${SPOTDL_OPTS[@]}" save "$playlist_url" --save-file "$SPOTDL_FILE"
+echo "==> Saving spotdl sync file for '$playlist_name'..."
+spotdl --cookie-file "$COOKIE_FILE" save "$playlist_url" --save-file "$SPOTDL_FILE"
 
 echo ""
 echo "Setup complete."
-echo "  Sync file : $SPOTDL_FILE"
+echo "  Playlist    : $playlist_name"
+echo "  Sync file   : $SPOTDL_FILE"
+echo "  Download dir: $SPOTDL_DIR/$playlist_name/"
 echo ""
-echo "YouTube Premium (higher quality M4A downloads):"
-echo "  1. Install the 'Get cookies.txt LOCALLY' browser extension"
-echo "  2. Open https://music.youtube.com and log in"
-echo "  3. Export cookies in Netscape format"
-echo "  4. Save to: $COOKIE_FILE"
-echo "  spotdl will detect and use the file automatically."
-echo ""
-echo "  Run 'music-ingest' to download and import your library."
+echo "Run 'music-setup' again to add another playlist."
+echo "Run 'music-ingest' to download and import all playlists."

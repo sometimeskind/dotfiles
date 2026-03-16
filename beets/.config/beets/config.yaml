@@ -11,21 +11,15 @@ import:
   duplicate_action: skip
 
 match:
-  strong_rec_thresh: 0.10   # auto-accept threshold; below this = skipped to quarantine
+  strong_rec_thresh: 0.05   # distance threshold; lower = stricter (0 = perfect match)
+                             # 0.05 means only very close MusicBrainz matches are auto-accepted
 
 paths:
   default: $albumartist/$album/$track - $title
   singleton: $albumartist/$album/$track - $title
   comp: Various Artists/$album/$track - $title
 
-plugins: fromfilename fetchart embedart scrub duplicates smartplaylist
-
-smartplaylist:
-  playlist_dir: ~/Music/playlists
-  relative_to: ~/Music/playlists
-  playlists:
-    - name: spotify-likes.m3u
-      query: source:spotdl
+plugins: fromfilename fetchart embedart scrub duplicates
 
 fetchart:
   auto: yes

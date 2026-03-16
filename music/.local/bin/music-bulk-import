@@ -14,7 +14,7 @@ if [[ ! -d "$SOURCE" ]]; then
 fi
 
 QUARANTINE=~/Music/quarantine
-AUDIO_EXTS="mp3|flac|ogg|opus|m4a|aac|wav|wma|aiff|ape|mpc"
+AUDIO_EXTS="mp3"
 
 echo "==> Bulk importing from: $SOURCE"
 beet import --quiet "$SOURCE" || true
