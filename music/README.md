@@ -10,7 +10,7 @@ Three dotfiles packages work together:
 |---------|-------------|---------|
 | `beets` | `~/.config/beets/config.yaml` | Library management, tag fixing |
 | `spotdl` | `~/.spotdl/config.json` | Download quality settings |
-| `music` | `~/.local/bin/music-{setup,ingest,import}` | Pipeline scripts |
+| `music` | `~/.local/bin/music-{setup,ingest,import,remove}` | Pipeline scripts |
 
 ---
 
@@ -106,15 +106,16 @@ music-ingest
 
 For **each** `.spotdl` file found in `~/Music/inbox/spotdl/`, runs the full pipeline:
 
-1. `spotdl sync` — downloads any new tracks into `~/Music/inbox/spotdl/<name>/`
-2. `beet import --set source=<name>` — queries MusicBrainz, auto-accepts high-confidence matches, **moves** files into `~/Music/library/` (one copy on disk)
-3. Generates `~/Music/playlists/<name>.m3u` with relative paths (required for Navidrome)
-4. Quarantine sweep — audio files left in the download dir (beets skipped them) are moved to `~/Music/quarantine/`
+1. `spotdl sync --sync-without-deleting` — downloads new tracks, updates sync state; never deletes local files
+2. Diffs the `.spotdl` file before and after sync — any track removed from the Spotify playlist has its beets `source` tag cleared, so it drops out of the `.m3u` on next generation (file is kept)
+3. `beet import --set source=<name>` — queries MusicBrainz, auto-accepts high-confidence matches, **moves** files into `~/Music/library/` (one copy on disk)
+4. Generates `~/Music/playlists/<name>.m3u` with relative paths (required for Navidrome)
+5. Quarantine sweep — audio files left in the download dir (beets skipped them) are moved to `~/Music/quarantine/`
 
 After all playlists are processed:
 
-5. `music-import` — imports anything manually dropped into `~/Music/inbox/`
-6. `beet update` — refreshes library metadata and detects moved files
+6. `music-import` — imports anything manually dropped into `~/Music/inbox/`
+7. `beet update` — refreshes library metadata and detects moved files
 
 > **Note:** `beet update` does not remove entries for deleted files. To prune the library manually after deleting files from disk, run `beet remove <query>` with a specific query (e.g. `beet remove artist:OldArtist`). Avoid running `beet remove` with no query — it matches all items.
 
@@ -125,6 +126,18 @@ Drop any audio file into `~/Music/inbox/`, then run `music-import` (or `music-in
 ```bash
 music-import
 ```
+
+### Removing a playlist
+
+```bash
+music-remove <name>
+# or interactively:
+music-remove
+```
+
+Removes the `.spotdl` sync file, download directory, and `.m3u`. Clears the beets `source` tag for all associated tracks. **Library files are never deleted.**
+
+> **Note:** If a track appears in only one playlist, clearing its `source` tag means it will no longer appear in any `.m3u`. The file stays in `~/Music/library/` and Navidrome can still find it via library scan — it just won't be in a playlist.
 
 ---
 
@@ -233,6 +246,7 @@ dotfiles/
       music-setup          ← add a playlist (run once per playlist)
       music-ingest         ← daily sync; download → import → m3u → quarantine → prune
       music-import         ← import inbox drops; called by music-ingest, also standalone
+      music-remove         ← remove a playlist (keeps library files)
 
 ~/.spotdl/
   config.json              ← symlink to dotfiles; format: m4a, bitrate: disable
