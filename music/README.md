@@ -58,7 +58,21 @@ Ensure the scripts are executable:
 chmod +x ~/.local/bin/music-setup ~/.local/bin/music-ingest ~/.local/bin/music-import
 ```
 
-### 2. Set up YouTube Premium cookies (required)
+### 2. Set up Spotify developer credentials (required)
+
+The scripts use your own Spotify app credentials to avoid hitting rate limits on spotdl's shared public client ID.
+
+1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) and create an app
+2. Set the redirect URI to `http://127.0.0.1:8888/callback`
+3. Copy the **Client ID** and **Client Secret**
+4. Save them in 1Password as a new item:
+   - Vault: `Private`
+   - Item name: `Spotify Developer App`
+   - Fields: `client_id`, `client_secret`
+
+The scripts read these at runtime via `op read` — nothing is stored on disk.
+
+### 3. Set up YouTube Premium cookies (required)
 
 spotdl requires YouTube Premium cookies to download at full quality (M4A 256 kbps). Without them, the scripts will not run.
 
@@ -71,7 +85,7 @@ spotdl requires YouTube Premium cookies to download at full quality (M4A 256 kbp
 
 The cookies file is not committed to the dotfiles repo (it is personal and rotates).
 
-### 3. Add a playlist
+### 4. Add a playlist
 
 ```bash
 music-setup
