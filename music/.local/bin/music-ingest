@@ -5,6 +5,8 @@ SPOTDL_DIR=~/Music/inbox/spotdl
 QUARANTINE=~/Music/quarantine
 PLAYLISTS=~/Music/playlists
 COOKIE_FILE=~/.config/spotdl/cookies.txt
+OP_CLIENT_ID="op://Private/Spotify Developer App/client_id"
+OP_CLIENT_SECRET="op://Private/Spotify Developer App/client_secret"
 
 if [[ ! -f "$COOKIE_FILE" ]]; then
     echo "Error: YouTube Premium cookies not found at $COOKIE_FILE" >&2
@@ -12,7 +14,17 @@ if [[ ! -f "$COOKIE_FILE" ]]; then
     exit 1
 fi
 
-SPOTDL_OPTS=(--cookie-file "$COOKIE_FILE")
+if ! command -v op &>/dev/null; then
+    echo "Error: 1Password CLI (op) not found" >&2
+    exit 1
+fi
+
+echo "==> Fetching Spotify credentials from 1Password..."
+SPOTDL_OPTS=(
+    --cookie-file "$COOKIE_FILE"
+    --client-id "$(op read "$OP_CLIENT_ID")"
+    --client-secret "$(op read "$OP_CLIENT_SECRET")"
+)
 
 audio_files_in() {
     find "$1" -maxdepth "${2:-1}" -type f | grep -Ei "\.(mp3|flac|ogg|opus|m4a|aac|wav|wma|aiff|ape|mpc)$" || true
