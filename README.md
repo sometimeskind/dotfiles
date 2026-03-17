@@ -14,7 +14,7 @@ The repo includes a `Makefile` that wraps the verbose `stow --dir=... --target=.
 
 ```bash
 make stow              # stow all packages
-make stow PKG=music    # stow one package
+make stow PKG=zsh      # stow one package
 make unstow PKG=zsh    # remove symlinks for one package
 make restow            # restow everything (useful after a git pull)
 make help              # list all targets
