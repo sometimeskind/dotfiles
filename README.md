@@ -70,6 +70,29 @@ make stow PKG=starship
 make stow
 ```
 
+### Claude Code plugins
+
+After stowing the `claude` package, install these plugins from within Claude Code:
+
+```
+/plugin install superpowers
+/plugin install context7
+/plugin install commit-commands
+/plugin install security-guidance
+/plugin install claude-md-management
+/plugin install pr-review-toolkit
+/plugin install claude-code-setup
+/plugin install explanatory-output-style
+/plugin install plugin-dev
+/plugin install greptile
+/plugin install hookify
+/plugin install skill-creator
+/plugin install learning-output-style
+/plugin install warden --from claude-warden
+```
+
+The `claude` package tracks `warden.yaml` (command allow/block rules) and `settings.json`. The plugin cache and install manifest are machine-local and not tracked.
+
 > **Note:** Some configs contain Linux-specific paths that need adjusting on macOS:
 >
 > - `zsh/.zshrc` — hardcodes `/home/linuxbrew/` (Homebrew prefix on macOS is `/opt/homebrew`), `/home/tom/` (your macOS username differs), and `/usr/bin/code` (VS Code path on macOS). Edit these after stowing.

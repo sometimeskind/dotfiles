@@ -1,0 +1,5 @@
+rules:
+  - command: "just"
+    default: allow
+  - command: "docker"
+    default: allow
