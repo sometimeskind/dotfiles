@@ -3,3 +3,4 @@ rules:
     default: allow
   - command: "docker"
     default: allow
+    override: true
