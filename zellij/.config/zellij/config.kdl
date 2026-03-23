@@ -28,12 +28,35 @@ themes {
     }
 }
 
-// Custom keybindings — iTerm2-style splits added to Normal mode.
-// Alt+D → split right, Alt+Shift+D → split down.
-// These do not conflict with any Zellij defaults.
+// Custom keybindings — Normal mode additions and conflict resolution.
+//
+// Claude Code conflict fixes:
+//   Ctrl+O  → Zellij Session mode    conflicts with Claude Code verbose toggle
+//   Ctrl+T  → Zellij Tab mode        conflicts with Claude Code task list toggle
+//   Ctrl+G  → Zellij Lock mode       conflicts with Claude Code open-in-editor
+//
+// Each conflicting Ctrl key is unbound from Normal mode so it passes through to
+// Claude Code (or any other inner app). Zellij equivalents are remapped to Alt keys
+// that are not used by Claude Code on Linux:
+//   Alt+O → Session mode
+//   Alt+backtick → Tab mode
+//   (Lock mode removed — all conflicts resolved, lock is no longer needed)
+//
+// Pane splits (iTerm2-style):
+//   Alt+D → split right, Alt+Shift+D → split down.
 keybinds {
     normal {
+        // Pane splits
         bind "Alt d" { NewPane "Right"; }
         bind "Alt D" { NewPane "Down"; }
+
+        // Free Ctrl+O/T/G for Claude Code; remap Zellij actions to Alt keys
+        unbind "Ctrl o"
+        bind "Alt o" { SwitchToMode "Session"; }
+
+        unbind "Ctrl t"
+        bind "Alt `" { SwitchToMode "Tab"; }
+
+        unbind "Ctrl g"
     }
 }
