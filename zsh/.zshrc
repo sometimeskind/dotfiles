@@ -19,12 +19,11 @@ fi
 
 eval "$(starship init zsh)"
 
-# ── Zellij (install: brew install zellij) ─────────────────────────────────────
-# Auto-start Zellij when opening a terminal outside of an existing session.
+# ── tmux (install: brew install tmux) ─────────────────────────────────────────
+# Auto-attach to or create the main session on terminal open.
 # Useful for SSH workflows — keeps sessions alive across disconnects.
-# Comment out if you find it annoying for local use.
-if [[ -z $ZELLIJ ]] && command -v zellij &>/dev/null; then
-  zellij attach --create
+if [[ -z $TMUX ]] && command -v tmux &>/dev/null; then
+  tmux new-session -A -s main
 fi
 
 alias aptup="sudo apt update && sudo apt dist-upgrade -yq && sudo apt autoremove -yq"
