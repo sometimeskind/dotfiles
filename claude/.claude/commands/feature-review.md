@@ -1,0 +1,1 @@
+Here's a feature I've written. Play three roles in sequence: first a skeptical senior developer asking what's underspecified or ambiguous; second, a QA engineer asking what edge cases I haven't covered; third, a new team member asking what context they'd need that isn't here. Don't suggest solutions — just surface the gaps.
