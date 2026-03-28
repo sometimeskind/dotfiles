@@ -4,3 +4,5 @@ rules:
   - command: "docker"
     default: allow
     override: true
+  - command: "sed"
+    default: allow
