@@ -6,13 +6,13 @@ description: Process PR review comments systematically — categorize, confirm t
 # PR Review Feedback
 
 TRIGGER when: user pastes review comments, asks to address or fix feedback, or says "fix these comments".
-DO NOT TRIGGER when: user wants a general code review with no specific comments to act on.
+DO NOT TRIGGER when: user wants a general code review with no specific comments to act on, or when feedback seems technically questionable and needs pushback evaluation before any code is touched.
 
 **Feedback or PR number:** $ARGUMENTS
 
 ## Workflow
 
-1. **Identify the PR** — if a number was given, run `gh pr view <number>`; otherwise ask.
+1. **Identify the PR** — if a number was given, fetch its details from your PR tool (e.g. `gh pr view <number>`); otherwise ask.
 
 2. **Categorize each comment** and echo back a structured list:
    ```
@@ -34,9 +34,9 @@ DO NOT TRIGGER when: user wants a general code review with no specific comments 
    Open:       #3 [question] — <what you still need>
    ```
    Push: `git push origin <branch>`
-   Check CI: `gh pr checks <pr-number>` — diagnose and fix any failures before handing back
+   Check CI status for the PR — diagnose and fix any failures before handing back (e.g. `gh pr checks <pr-number>` on GitHub)
 
-5. **Hand off** — tell the user the PR is ready for re-review; do not request re-review on GitHub unless asked
+5. **Hand off** — tell the user the PR is ready for re-review; do not request re-review on your platform unless asked
 
 ## Guidelines
 

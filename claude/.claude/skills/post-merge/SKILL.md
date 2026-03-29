@@ -12,16 +12,15 @@ DO NOT TRIGGER when: a PR is still open or under review.
 
 ```bash
 git checkout main && git pull
-gh pr list --author "@me" --state open
 ```
 
-Then rebase each open branch onto the updated default branch (may be `main`, `master`, or `trunk`).
+Then list your open PRs in your hosting platform and rebase each branch onto the updated default branch (may be `main`, `master`, or `trunk`).
 
 ## Workflow
 
 1. **Pull default branch** — `git checkout <default> && git pull`
 
-2. **List open PRs** — `gh pr list --author "@me" --state open`
+2. **List open PRs** — query your hosting platform for open PRs authored by you (e.g. `gh pr list --author "@me" --state open` on GitHub)
 
 3. **Rebase each open branch:**
    ```bash
@@ -30,11 +29,8 @@ Then rebase each open branch onto the updated default branch (may be `main`, `ma
    git push --force-with-lease origin <branch>
    ```
 
-4. **Check CI on each rebased branch:**
-   ```bash
-   gh pr checks <pr-number>
-   ```
-   If a check fails: `gh run view <run-id> --log-failed`, diagnose, fix, repeat.
+4. **Check CI on each rebased branch** — check CI status for the PR (e.g. `gh pr checks <pr-number>` on GitHub).
+   If a check fails, view the failed run logs, diagnose, fix, repeat.
 
 5. **Return to default branch** — `git checkout <default>`
 

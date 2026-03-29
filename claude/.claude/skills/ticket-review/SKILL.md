@@ -10,10 +10,7 @@ DO NOT TRIGGER when: user wants to review backlog health or issue quality across
 
 ## Workflow
 
-1. **Fetch assigned issues:**
-   ```bash
-   gh issue list --state open --assignee @me --json number,title,body,labels,updatedAt
-   ```
+1. **Fetch assigned issues** — query your issue tracker for open issues assigned to you (e.g. `gh issue list --state open --assignee @me --json number,title,body,labels,updatedAt` on GitHub).
 
 2. **Filter to actionable issues** — skip any that:
    - Have no acceptance criteria (can't tell when done)
