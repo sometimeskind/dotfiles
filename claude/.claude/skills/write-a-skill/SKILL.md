@@ -1,6 +1,6 @@
 ---
 name: write-a-skill
-description: Create new agent skills with proper structure, progressive disclosure, and bundled resources. Use when user wants to create, write, or build a new skill.
+description: Lightweight workflow for drafting a reference or how-to skill — gather requirements, produce a SKILL.md, review with user. Use when user wants to create or write a skill and needs a quick structured process, not a full TDD testing cycle.
 ---
 
 # Writing Skills
