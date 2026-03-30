@@ -22,6 +22,33 @@ make help              # list all targets
 
 All targets accept an optional `PKG=<name>` to act on a single package instead of all of them.
 
+## Brew packages
+
+These are the Homebrew packages assumed by configs in this repo.
+
+| Package | Type | Purpose |
+|---|---|---|
+| `stow` | formula | required — symlink manager that makes this whole repo work |
+| `starship` | formula | shell prompt (`starship/`) |
+| `tmux` | formula | terminal multiplexer (`tmux/`) |
+| `bat` | formula | better `cat` with syntax highlighting (`bat/`) |
+| `ghostty` | cask (macOS) | terminal emulator (`ghostty/`) |
+| `fzf` | formula | fuzzy finder — Ctrl+R history, Ctrl+T file picker |
+| `fd` | formula | faster `find`, used by fzf for file/dir picking |
+| `zoxide` | formula | smarter `cd` with frecency tracking (`z`/`zi`) |
+| `eza` | formula | better `ls` with icons and git status |
+| `1password-cli` | formula | `op` CLI — lazy-loads secrets into shell on start |
+| `font-meslo-lg-nerd-font` | cask | MesloLGS Nerd Font Mono, used by Ghostty config |
+
+The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
+
+Quick install of everything:
+
+```bash
+brew install stow starship tmux bat fzf fd zoxide eza 1password-cli
+brew install --cask ghostty font-meslo-lg-nerd-font
+```
+
 ## Setup on a new machine
 
 ### Linux
