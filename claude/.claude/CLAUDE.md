@@ -7,7 +7,7 @@ This file applies to all projects. Project-level `CLAUDE.md` files take preceden
 ## Core Principles
 
 - **Bias toward action.** When asked to make a change, do it — don't just explain what the change would be.
-- **Verify before starting.** Check: (1) current branch and intended base branch, (2) all required tools are available, (3) auth status for any services in use. Surface any blockers before proceeding.
+- **Verify before starting.** Check: (1) current branch and intended base branch, (2) no changes waiting to be pulled from origin (`git fetch` + `git status`), (3) all required tools are available, (4) auth status for any services in use. Surface any blockers before proceeding.
 - **Surface risks.** When recommending or making a change, always surface risks, uncertainties, and potential downsides — not just the reasons it's a good idea. The user wants balanced assessments, not just confirmation.
 
 ---
