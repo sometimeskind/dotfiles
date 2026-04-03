@@ -9,6 +9,7 @@ This file applies to all projects. Project-level `CLAUDE.md` files take preceden
 - **Bias toward action.** When asked to make a change, do it — don't just explain what the change would be.
 - **Verify before starting.** Check: (1) current branch and intended base branch, (2) all required tools are available, (3) auth status for any services in use. Surface any blockers before proceeding.
 - **Surface risks.** When recommending or making a change, always surface risks, uncertainties, and potential downsides — not just the reasons it's a good idea. The user wants balanced assessments, not just confirmation.
+- **Boy Scout Principle.** While working in an area of code, watch for nearby improvements (naming, clarity, small bugs, outdated patterns). When spotted, raise them conversationally and let the user decide whether to pursue them. Don't silently make unrelated changes — surface them as suggestions. Keep diversions proportionate: mention small things, don't rabbit-hole into large refactors.
 
 ---
 
