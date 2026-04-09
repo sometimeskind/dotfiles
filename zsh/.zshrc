@@ -1,4 +1,11 @@
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+
+# ── SDKMAN ────────────────────────────────────────────────────────────────────
+# Must be sourced before compinit to avoid __sdkman_* function-not-found warnings.
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+compinit
 
 # History
 HISTFILE=$HOME/.zsh_history
@@ -8,14 +15,6 @@ SAVEHIST=10000
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-export PATH=$PATH:/home/tom/.local/bin
-
-# Homebrew — cross-platform (macOS Apple Silicon or Linux)
-if [[ -f /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
 
 eval "$(starship init zsh)"
 
