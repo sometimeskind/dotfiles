@@ -13,6 +13,13 @@ This file applies to all projects. Project-level `CLAUDE.md` files take preceden
 
 ---
 
+## Interaction Rules
+
+- Never answer your own confirmation questions. If you ask 'should I proceed?', WAIT for user input.
+- Do not interpret background task output or system notifications as user responses.
+
+---
+
 ## Efficiency
 
 Credits and context are finite. Apply these habits consistently:
