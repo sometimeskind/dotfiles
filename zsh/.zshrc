@@ -89,3 +89,9 @@ if command -v bat &>/dev/null; then
   alias cat="bat --paging=never"
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
+
+# ── fd (install: brew install fd) ─────────────────────────────────────────────
+# fd is faster than find and respects .gitignore
+if command -v fd &>/dev/null; then
+  alias find=fd
+fi
