@@ -33,8 +33,7 @@
     "hookify@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": false,
     "learning-output-style@claude-plugins-official": false,
-    "warden@claude-warden": true,
-    "gropyus-development@gropyus": true
+    "warden@claude-warden": true
   },
   "extraKnownMarketplaces": {
     "claude-warden": {
