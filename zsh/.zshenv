@@ -1,4 +1,4 @@
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.docker/bin:$PATH"
 
 # ── Homebrew — cross-platform (macOS Apple Silicon or Linux) ──────────────────
 if [[ -f /opt/homebrew/bin/brew ]]; then
