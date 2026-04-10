@@ -11,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/tom/.claude/hooks/block-dash-separators.sh"
+            "command": "$HOME/.claude/hooks/block-dash-separators.sh"
           },
           {
             "type": "command",
@@ -27,13 +27,14 @@
     "security-guidance@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": true,
-    "plugin-dev@claude-plugins-official": true,
-    "hookify@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "learning-output-style@claude-plugins-official": true,
-    "warden@claude-warden": true
+    "claude-code-setup@claude-plugins-official": false,
+    "explanatory-output-style@claude-plugins-official": false,
+    "plugin-dev@claude-plugins-official": false,
+    "hookify@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": false,
+    "learning-output-style@claude-plugins-official": false,
+    "warden@claude-warden": true,
+    "gropyus-development@gropyus": true
   },
   "extraKnownMarketplaces": {
     "claude-warden": {

@@ -99,14 +99,3 @@ When writing code or configuration that uses an external library, API, or framew
 - Commit messages: `type: short description` (e.g. `feat: add retry logic`, `fix: handle null response`, `chore: update dependencies`).
 - Reference the ticket number in the MR or branch name — not necessarily in every commit message.
 
----
-
-## Action Logging
-
-When taking actions with external side effects (applying infrastructure changes, running database migrations, restarting services), log each action with a timestamp and short description of what it does and why. Format:
-
-```
-YYYY-MM-DD HH:MM:SS - <action> - <reason>
-```
-
-Store in a project-designated log file if one exists.
