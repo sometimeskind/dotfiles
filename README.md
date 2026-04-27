@@ -42,6 +42,8 @@ These are the Homebrew packages assumed by configs in this repo.
 
 The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
 
+Also needed for neovim: neovim, rg, lazygit, luarocks, ast-grep, lua
+
 Quick install of everything:
 
 ```bash

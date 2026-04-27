@@ -6,3 +6,5 @@ rules:
     override: true
   - command: "sed"
     default: allow
+  - command: "gsd-sdk"
+    default: allow

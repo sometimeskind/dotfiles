@@ -31,8 +31,6 @@ alias brewup="brew upgrade --greedy"
 alias flatup="flatpak update -y"
 alias yolo="aptup && brewup && flatup && pipxup"
 
-export EDITOR="/usr/bin/code"
-
 # Lazy-load secrets from 1Password before the first command
 if command -v op &>/dev/null; then
   _op_secrets_loaded=false
@@ -95,3 +93,10 @@ fi
 if command -v fd &>/dev/null; then
   alias find=fd
 fi
+
+if command -v nvim &>/dev/null; then
+  alias vi=nvim
+  export EDITOR="nvim"
+fi
+
+alias c=claude --worktree
