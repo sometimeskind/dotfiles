@@ -89,14 +89,13 @@ if command -v bat &>/dev/null; then
 fi
 
 # ── fd (install: brew install fd) ─────────────────────────────────────────────
-# fd is faster than find and respects .gitignore
-if command -v fd &>/dev/null; then
-  alias find=fd
-fi
+# fd is faster than find and respects .gitignore.
+# NOTE: do NOT alias find=fd — fd uses --type (double-dash) while many tools
+# call find -type (single-dash POSIX style), which fd misparses as -t ype.
 
 if command -v nvim &>/dev/null; then
   alias vi=nvim
   export EDITOR="nvim"
 fi
 
-alias c=claude --worktree
+alias c='claude --worktree'
