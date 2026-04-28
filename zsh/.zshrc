@@ -18,6 +18,10 @@ setopt HIST_IGNORE_SPACE
 
 eval "$(starship init zsh)"
 
+# ── zsh-vim-mode (submodule: zsh/.config/zsh/plugins/zsh-vim-mode) ────────────
+# Vim normal/insert mode at the prompt. Cursor shape reflects current mode.
+source "$HOME/.config/zsh/plugins/zsh-vim-mode/zsh-vim-mode.plugin.zsh"
+
 # ── tmux (install: brew install tmux) ─────────────────────────────────────────
 # Auto-attach to or create the main session on terminal open.
 # Useful for SSH workflows — keeps sessions alive across disconnects.
