@@ -2,107 +2,138 @@
 
 This file applies to all projects. Project-level `CLAUDE.md` files take precedence where they conflict.
 
+These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
 ---
 
 ## Core Principles
 
 - **Bias toward action.** When asked to make a change, do it — don't just explain what the change would be.
-- **Verify before starting.** Check: (1) current branch and intended base branch, (2) all required tools are available, (3) auth status for any services in use. Surface any blockers before proceeding.
-- **Surface risks.** When recommending or making a change, always surface risks, uncertainties, and potential downsides — not just the reasons it's a good idea. The user wants balanced assessments, not just confirmation.
-- **Boy Scout Principle.** While working in an area of code, watch for nearby improvements (naming, clarity, small bugs, outdated patterns). When spotted, raise them conversationally and let the user decide whether to pursue them. Don't silently make unrelated changes — surface them as suggestions. Keep diversions proportionate: mention small things, don't rabbit-hole into large refactors.
+- **Verify before starting.** Check current branch, intended base, required tools, auth status. Surface blockers before proceeding.
+- **Surface risks.** Always surface uncertainties and downsides — not just reasons it's a good idea.
+- **Boy Scout: surface, don't silently fix.** When you spot nearby improvements, raise them; don't make unrelated changes silently.
+
+---
+
+## Think Before Coding
+
+Don't assume. Don't hide confusion. Surface tradeoffs.
+
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If something is unclear, stop. Name what's confusing. Ask.
+- For non-trivial tasks: state a brief plan with verifiable success criteria *before* implementing.
+  - "Add validation" → "Write tests for invalid inputs, then make them pass"
+  - "Fix the bug" → "Write a test that reproduces it, then make it pass"
+  - "Refactor X" → "Ensure tests pass before and after"
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+## Simplicity First
+
+Minimum code that solves the problem. Nothing speculative.
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you wrote 200 lines and it could be 50, rewrite it.
+
+Ask: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+---
+
+## Surgical Changes
+
+Touch only what you must. **Every changed line should trace directly to the user's request.**
+
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- Remove imports/variables your changes orphaned. Don't remove pre-existing dead code unless asked.
 
 ---
 
 ## Interaction Rules
 
-- Never answer your own confirmation questions. If you ask 'should I proceed?', WAIT for user input.
-- Do not interpret background task output or system notifications as user responses.
-- **Don't repeat back what the user asked.** Start with the work or the result.
-- **Don't explain standard operations.** No narration for file reads, greps, test runs, or other routine tool calls. Explain only non-obvious decisions, tradeoffs, or assumptions.
-- **Never narrate between tool calls.** Do not write "Let me check…", "Now I'll…", "Looking at…", or any equivalent. Call tools silently and report results.
-- **Keep end-of-turn summaries to one line** unless the change was complex.
+- Never answer your own confirmation questions. If you ask 'should I proceed?', WAIT.
+- Don't repeat back what the user asked. Start with the work or the result.
+- Don't explain standard operations. No narration for routine reads, greps, or test runs.
+- Never narrate between tool calls. Call tools silently, report results.
+- Keep end-of-turn summaries to one line unless the change was complex.
 
 ---
 
 ## Efficiency
 
-Credits and context are finite. Apply these habits consistently:
+Credits and context are finite. The dominant cost driver is generated output, not context size.
 
-- **Batch related changes into one MR.** Combine small related fixes, cleanups, or refactors unless explicitly asked to keep them separate.
-- **Don't re-read files unnecessarily.** Plan edits before starting; read a file once and make all changes in one pass. Don't re-read files already in context.
-- **Read specific line ranges.** When you know exactly what you need, read only the relevant lines rather than the whole file. Read the full file only when surrounding context is needed for a correct edit.
-- **Keep sessions focused.** Complete one task fully before starting the next.
-- **Ask scope questions early.** If a small change could attach to an open MR rather than requiring a new one, ask upfront.
-- **Use the simplest tool for the job.** Direct search (Grep/Glob) instead of agents for simple lookups. Edit over Write for partial changes. Agents only when multiple rounds of exploration are clearly needed.
-- **Don't retry failed approaches.** If a command fails due to escaping or syntax, switch approach (temp script, different tool) rather than tweaking the same command repeatedly.
-- **Script recurring workflows.** When you run the same 3+ command sequence more than once in a session, write a script, commit it to the repo, and document it. Check `scripts/` first before writing a new one.
-- **Trim command output.** Pipe verbose test output through `tail -50` or `grep -A 5 "FAIL"` when expecting a single failure; use `grep -B 2 -A 5 "FAIL\|ERROR"` for multi-failure runs. Redirect build output to a file and show it only on failure. Never `cat` large files — use `head`, `tail`, or line ranges. Pipe linter/formatter output through `head -30`.
-- **Use .claudeignore.** Exclude generated files, build artifacts, and lock files from context to avoid ingesting them accidentally.
+- **Batch related changes into one MR.**
+- **Don't re-read files.** Plan edits before starting; read once, all changes in one pass.
+- **Read specific line ranges** when you know what you need.
+- **Use the simplest tool.** Direct Grep/Glob over agents. Agents only when multi-round exploration is clearly needed.
+- **`Edit` over `Write` for existing files — always.** `Write` outputs the entire file as generated tokens; `Edit` only emits the diff. For a 500-line file that's ~10× the output cost. Before calling `Write` on a file that already exists, stop and use `Edit` (or multiple `Edit` calls) instead. The only valid `Write`-on-existing-file case is a deliberate full rewrite where most lines change.
+- **Don't retry failed approaches.** Switch tactic; don't tweak the same command repeatedly.
+- **Trim command output.** Pipe through head/tail/grep; never `cat` large files.
+- **Use `.claudeignore`** to exclude generated files and build artifacts.
+
+### Plan-mode discipline
+
+Don't enter plan mode for tasks under ~50 lines of expected diff or for known fixes. Plan mode injects ~3KB of workflow instructions and steers toward parallel sub-agents — disproportionate cost for small work.
+
+### Skill discipline
+
+Project-local agents (`.claude/agents/`) and named skills (`.claude/skills/`) replace ad-hoc plan mode + parallel-Explore-agent patterns for recurring workflows. Prefer them when available.
 
 ---
 
 ## Risky Actions — Confirm Before Proceeding
 
-For actions that are hard to reverse, affect shared state, or could cause data loss, communicate the action and ask for confirmation before proceeding. Authorization for one instance does not cover all future instances.
+Authorization for one instance does not cover all future instances.
 
 Examples requiring confirmation:
-- Destructive operations: deleting files/branches, dropping tables, `rm -rf`, overwriting uncommitted changes
-- Hard-to-reverse operations: force-push, `git reset --hard`, amending published commits, removing dependencies, modifying CI/CD pipelines
-- Actions visible to others: pushing code, creating/closing/commenting on MRs or tickets, sending messages, posting to external services, modifying shared infrastructure
+- Destructive: deleting files/branches, dropping tables, `rm -rf`, overwriting uncommitted changes
+- Hard-to-reverse: force-push, `git reset --hard`, amending published commits, removing deps, modifying CI/CD
+- Visible to others: pushing code, creating/closing/commenting on MRs or tickets, sending messages, posting externally, modifying shared infra
 
-When encountering an obstacle, do not use destructive actions as a shortcut. Identify root causes. Investigate unexpected state before deleting or overwriting — it may represent in-progress work.
+When you hit an obstacle, find the root cause. Don't use destructive actions as a shortcut. Investigate unexpected state — it may be in-progress work.
 
 ---
 
 ## Shell Command Safety
 
-- **Never use unnecessary quotation marks in shell commands.** Quoted strings (especially with `"..."`) can hide variable expansion and flag-like content, which triggers permission prompts every time.
-- **No visual separators inside quoted strings.** Never use sequences of dashes or similar decorators (e.g. `"-----"`) in shell commands or arguments.
-- Keep shell commands simple and unquoted where possible. Use temp files or scripts instead of complex quoting when arguments are non-trivial.
+- Never use unnecessary quotation marks. Quoted flag-like strings trigger permission prompts.
+- No visual separators inside quoted strings (e.g. `"-----"`).
+- Use temp files or scripts for non-trivial arguments instead of complex quoting.
 
 ---
 
 ## Secrets
 
-Never commit plaintext secrets. Use the project's designated secret management mechanism (sealed secrets, Azure Key Vault, environment-specific secret stores, etc.). When in doubt, ask.
+Never commit plaintext secrets. Use sealed secrets, Azure Key Vault, or env-specific stores. When in doubt, ask.
 
 ---
 
 ## Pinning Versions
 
-Never pin a container image version or package version from memory. Always look up the current stable release before pinning.
+Never pin from memory. Look up the current stable release first.
 
-**GitHub-hosted projects** (covers most Kubernetes ecosystem tooling):
-```bash
-gh release list --repo <org/repo> --limit 5
-```
-Pick the most recent non-prerelease tag.
-
-**Docker Hub images** — check whether the project has a GitHub repo and use `gh release list` there. Most official images (e.g. `homeassistant/home-assistant`, `linuxserver/*`) have a corresponding GitHub repo with releases.
-
-**If the latest stable version is ambiguous or hard to determine** (e.g. no GitHub repo, irregular tagging scheme, unclear which tag is "stable"): ask the user before pinning rather than guessing.
+- GitHub-hosted: `gh release list --repo <org/repo> --limit 5`, pick most recent non-prerelease.
+- Docker Hub images usually have a corresponding GitHub repo — use `gh release list` there.
+- If "stable" is ambiguous, ask before pinning.
 
 ---
 
 ## MCP Tools
 
-### context7 — Up-to-date Library Documentation
-When writing code or configuration that uses an external library, API, or framework, use context7 to fetch current documentation before writing. This prevents writing against stale API specs or deprecated fields.
-
-**How:** Call `resolve-library-id("<library-name>")` first, then `get-library-docs(<id>, "<topic>")`.
-
-**When to use:**
-- Before writing manifests for Kubernetes APIs, Helm chart values, or CRD schemas
-- Before implementing a feature that calls an external SDK or framework
-- When uncertain whether a field, annotation, or option still exists in the current version
-
-**When not to use:** For well-known, stable APIs you already know (e.g. basic git commands, standard bash). Use context7 for external libraries — especially those that upgrade frequently.
+### context7 — library docs
+Before writing code against an external library/SDK/framework: `resolve-library-id` then `get-library-docs`. Skip for well-known stable APIs (git, bash). Use for libraries that upgrade frequently.
 
 ---
 
 ## Commit Style
 
-- One logical change per commit.
-- Commit messages: `type: short description` (e.g. `feat: add retry logic`, `fix: handle null response`, `chore: update dependencies`).
-- Reference the ticket number in the MR or branch name — not necessarily in every commit message.
-
+- One logical change per commit. `type: short description` (`feat:`, `fix:`, `chore:`).
+- Reference ticket in MR/branch name, not necessarily every commit.
