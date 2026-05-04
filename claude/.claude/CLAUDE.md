@@ -73,7 +73,8 @@ Credits and context are finite. The dominant cost driver is generated output, no
 - **Batch related changes into one MR.**
 - **Don't re-read files.** Plan edits before starting; read once, all changes in one pass.
 - **Read specific line ranges** when you know what you need.
-- **Use the simplest tool.** Direct Grep/Glob over agents. Edit over Write for partial changes. Agents only when multi-round exploration is clearly needed.
+- **Use the simplest tool.** Direct Grep/Glob over agents. Agents only when multi-round exploration is clearly needed.
+- **`Edit` over `Write` for existing files — always.** `Write` outputs the entire file as generated tokens; `Edit` only emits the diff. For a 500-line file that's ~10× the output cost. Before calling `Write` on a file that already exists, stop and use `Edit` (or multiple `Edit` calls) instead. The only valid `Write`-on-existing-file case is a deliberate full rewrite where most lines change.
 - **Don't retry failed approaches.** Switch tactic; don't tweak the same command repeatedly.
 - **Trim command output.** Pipe through head/tail/grep; never `cat` large files.
 - **Use `.claudeignore`** to exclude generated files and build artifacts.
