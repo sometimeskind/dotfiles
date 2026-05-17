@@ -78,6 +78,7 @@ Credits and context are finite. The dominant cost driver is generated output, no
 - **Don't retry failed approaches.** Switch tactic; don't tweak the same command repeatedly.
 - **Trim command output.** Pipe through head/tail/grep; never `cat` large files.
 - **Use `.claudeignore`** to exclude generated files and build artifacts.
+- **Push to CI before running long test suites.** On a feature branch, if the full test suite takes more than ~5 minutes and you're reasonably confident it will pass, push first so CI runs in parallel rather than waiting locally.
 
 ### Plan-mode discipline
 
