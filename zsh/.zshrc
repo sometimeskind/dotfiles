@@ -43,13 +43,20 @@ alias yolo="aptup && brewup && flatup && pipxup"
 
 # Lazy-load secrets from 1Password before the first command
 if command -v op &>/dev/null; then
+  # Headless boxes (no desktop app, WebAuthn 2FA unusable in op CLI) use a
+  # scoped service account: token placed by hand at this path (0600), granting
+  # read-only access to the pilot-infra vault only.
+  if [[ -f $HOME/.config/op/service-account-token ]]; then
+    OP_SERVICE_ACCOUNT_TOKEN="$(<"$HOME/.config/op/service-account-token")"
+    export OP_SERVICE_ACCOUNT_TOKEN
+  fi
   _op_secrets_loaded=false
   _load_op_secrets() {
     if ! $_op_secrets_loaded; then
       _op_secrets_loaded=true
       # </dev/null: with no account configured, op read PROMPTS (invisibly,
       # inside the capture) instead of failing — EOF makes it error out fast.
-      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null </dev/null)
+      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://pilot-infra/Homelab PAT/token" 2>/dev/null </dev/null)
       export GITHUB_PERSONAL_ACCESS_TOKEN
       # gh reads GH_TOKEN, not the name above — export both so gh (and
       # gh auth setup-git) work with no auth state on disk.
