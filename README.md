@@ -30,7 +30,8 @@ These are the Homebrew packages assumed by configs in this repo.
 |---|---|---|
 | `stow` | formula | required — symlink manager that makes this whole repo work |
 | `starship` | formula | shell prompt (`starship/`) |
-| `tmux` | formula | terminal multiplexer (`tmux/`) |
+| `herdr` | formula | agent-aware terminal multiplexer — preferred by `.zshrc` auto-attach when installed |
+| `tmux` | formula | terminal multiplexer (`tmux/`) — fallback when herdr is absent |
 | `bat` | formula | better `cat` with syntax highlighting (`bat/`) |
 | `ghostty` | cask (macOS) | terminal emulator (`ghostty/`) |
 | `fzf` | formula | fuzzy finder — Ctrl+R history, Ctrl+T file picker |
@@ -47,7 +48,7 @@ Also needed for neovim: neovim, rg, lazygit, luarocks, ast-grep, lua
 Quick install of everything:
 
 ```bash
-brew install stow starship tmux bat fzf fd zoxide eza 1password-cli
+brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli
 brew install --cask ghostty font-meslo-lg-nerd-font
 ```
 
@@ -75,6 +76,13 @@ make stow PKG=starship
 # ...or all at once:
 make stow
 ```
+
+### Fedora CoreOS (uCore)
+
+Immutable host — layer `zsh` with `rpm-ostree install zsh`, install everything
+else with Homebrew-on-Linux, and stow only the headless packages (`zsh`,
+`starship`, `bat`, `claude`, `nvim`; skip `tmux` and `ghostty`). The full
+bootstrap for the `pilot` box is documented in `homelab/ucore/README.md`.
 
 ### macOS
 
