@@ -47,7 +47,9 @@ if command -v op &>/dev/null; then
   _load_op_secrets() {
     if ! $_op_secrets_loaded; then
       _op_secrets_loaded=true
-      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null)
+      # </dev/null: with no account configured, op read PROMPTS (invisibly,
+      # inside the capture) instead of failing — EOF makes it error out fast.
+      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null </dev/null)
       export GITHUB_PERSONAL_ACCESS_TOKEN
       # gh reads GH_TOKEN, not the name above — export both so gh (and
       # gh auth setup-git) work with no auth state on disk.
