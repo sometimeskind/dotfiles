@@ -22,11 +22,17 @@ eval "$(starship init zsh)"
 # Vim normal/insert mode at the prompt. Cursor shape reflects current mode.
 source "$HOME/.config/zsh/plugins/zsh-vim-mode/zsh-vim-mode.plugin.zsh"
 
-# ── tmux (install: brew install tmux) ─────────────────────────────────────────
-# Auto-attach to or create the main session on terminal open.
+# ── herdr / tmux auto-attach (install: brew install herdr) ────────────────────
+# Attach to or create the main multiplexer session on terminal open.
 # Useful for SSH workflows — keeps sessions alive across disconnects.
-if [[ -z $TMUX ]] && command -v tmux &>/dev/null; then
-  tmux new-session -A -s main
+# herdr (agent-aware multiplexer) is preferred when installed; panes export
+# HERDR_PANE_ID, which doubles as the nesting guard. Falls back to tmux.
+if [[ -z $HERDR_PANE_ID && -z $TMUX ]]; then
+  if command -v herdr &>/dev/null; then
+    herdr
+  elif command -v tmux &>/dev/null; then
+    tmux new-session -A -s main
+  fi
 fi
 
 alias aptup="sudo apt update && sudo apt dist-upgrade -yq && sudo apt autoremove -yq"
@@ -43,6 +49,9 @@ if command -v op &>/dev/null; then
       _op_secrets_loaded=true
       GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://personal/Homelab PAT/token" 2>/dev/null)
       export GITHUB_PERSONAL_ACCESS_TOKEN
+      # gh reads GH_TOKEN, not the name above — export both so gh (and
+      # gh auth setup-git) work with no auth state on disk.
+      export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
     fi
   }
   autoload -U add-zsh-hook
