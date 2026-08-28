@@ -17,3 +17,10 @@ if [[ $(uname) == Darwin ]]; then
   export DOCKER_HOST=unix://$HOME/.docker/run/docker.sock
   export JDK_JAVA_OPTIONS="-Dapi.version=1.44"
 fi
+
+# ── Locale for non-login shells (mosh over ssh) ───────────────────────────────
+# sshd runs `zsh -c mosh-server …` without LANG (/etc/locale.conf only reaches
+# login shells). mosh-server adopts the server locale when it is UTF-8 and only
+# otherwise falls back to the client's — which uCore (C.utf8 only) rarely has.
+# Guarded so terminals that already export LANG (macOS) are left alone.
+export LANG="${LANG:-C.UTF-8}"
