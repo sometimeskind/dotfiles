@@ -37,7 +37,7 @@ fi
 
 alias aptup="sudo apt update && sudo apt dist-upgrade -yq && sudo apt autoremove -yq"
 alias pipxup="pipx upgrade-all"
-alias brewup="brew upgrade --greedy"
+alias brewup="brew upgrade --greedy -y"
 alias flatup="flatpak update -y"
 alias yolo="aptup && brewup && flatup && pipxup"
 

@@ -1,4 +1,7 @@
 export PATH="$HOME/.local/bin:$HOME/.docker/bin:$PATH"
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$HOME/go/bin"
+
 
 # ── Homebrew — cross-platform (macOS Apple Silicon or Linux) ──────────────────
 if [[ -f /opt/homebrew/bin/brew ]]; then
