@@ -6,9 +6,8 @@
   },
   "model": "claude-fable-5[1m]",
   "hooks": {
-    "PreToolUse": [
+    "PermissionRequest": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
@@ -21,6 +20,11 @@
           {
             "type": "command",
             "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
+          },
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": false
           }
         ]
       }
@@ -34,6 +38,115 @@
             "command": "$HOME/.claude/hooks/nvim-sync.sh"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/block-dash-separators.sh"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/var/home/core/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "async": true
+          }
+        ]
       }
     ]
   },
@@ -43,21 +156,22 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": false,
-    "context7@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": false,
     "claude-code-setup@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": false,
-    "plugin-dev@claude-plugins-official": false,
     "hookify@claude-plugins-official": false,
-    "skill-creator@claude-plugins-official": false,
     "learning-output-style@claude-plugins-official": false,
-    "warden@claude-warden": true,
+    "commit-commands@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": false,
+    "pr-review-toolkit@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true
+    "security-guidance@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": false,
+    "warden@claude-warden": true
   },
   "extraKnownMarketplaces": {
     "claude-warden": {
@@ -68,6 +182,8 @@
     }
   },
   "effortLevel": "xhigh",
+  "feedbackDrafts": "off",
+  "theme": "auto",
   "tui": "fullscreen",
   "autoMode": {
     "allow": [
