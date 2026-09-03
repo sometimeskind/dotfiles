@@ -23,7 +23,7 @@
           },
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": false
           }
         ]
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -54,7 +54,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -79,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -89,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -100,7 +100,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -111,7 +111,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -121,7 +121,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash '/var/home/core/.claude/hooks/herdr-agent-state.sh' session",
+            "command": "bash \"$HOME/.claude/hooks/herdr-agent-state.sh\" session",
             "timeout": 10
           }
         ]
@@ -132,7 +132,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -143,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
             "async": true
           }
         ]
@@ -213,7 +213,7 @@
       "**Protected IaC scopes**: Terraform root modules `talos/` (cluster provisioning, inline manifests), `backblaze/`, `desec/`, `cloudflare/`, `uptimerobot/`; Talos machine config and `cluster.inlineManifests`; RBAC (`kubernetes/agent-rbac/`, cilium operator RBAC), NetworkPolicies, Gateway/DNS/cert issuers; plus IAM, networking, quota and node-pool resources and anything tagged `prod`/`production`",
       "### User-specific",
       "**Primary use of Claude Code**: operating and evolving a single-admin Kubernetes homelab — Terraform/Talos provisioning, Kubernetes manifests via GitOps, sealed secrets, cluster diagnostics, and GitHub issue/PR workflow",
-      "**Trusted repo**: /home/tom/src/homelab (github.com:sometimeskind/homelab, private) and its `origin` remote. Sibling personal checkouts under ~/src (music-pipeline, dotfiles, bridge-monitor, prins.id, omada-exporter, mail-pipeline/document-pipeline) belong to the same account but are separate repos — most are PUBLIC, so content from this private repo must not be ported into them without confirmation.",
+      "**Trusted repo**: ~/src/homelab (github.com:sometimeskind/homelab, private) and its `origin` remote. Sibling personal checkouts under ~/src (music-pipeline, dotfiles, bridge-monitor, prins.id, omada-exporter, mail-pipeline/document-pipeline) belong to the same account but are separate repos — most are PUBLIC, so content from this private repo must not be ported into them without confirmation.",
       "**Org-specific CLIs**: kubectl (dominant), talosctl, terraform, kubeseal, gh, cilium, velero, tailscale, dig/host, just, op (1Password), beet, adb, yq, plus repo scripts under `scripts/` (cluster-health.sh, velero-status.sh, hubble-drops.sh, b2-init.sh, reseal-all.sh, opnsense-net-diag.sh, paperless-*.py)",
       "**routine under scripts/ prefix**: read-only diagnostics in `scripts/` and `scripts/health/` (cluster-health.sh, velero-status.sh, hubble-drops.sh, paperless-match-probe.py) are routine; state-changing scripts (reseal-all.sh, cnpg-restore.sh, velero-restore.sh, talos-upgrade.sh, davis-migrate-webdav.sh, argocd-pause.sh) are not",
       "**Never use the admin kubeconfig**: `~/.kube/admin.yaml` is user-run only — surface the command instead of running it"
