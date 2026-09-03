@@ -39,7 +39,7 @@ These are the Homebrew packages assumed by configs in this repo.
 | `zoxide` | formula | smarter `cd` with frecency tracking (`z`/`zi`) |
 | `eza` | formula | better `ls` with icons and git status |
 | `1password-cli` | formula | `op` CLI — lazy-loads secrets into shell on start |
-| `font-meslo-lg-nerd-font` | cask | MesloLGS Nerd Font Mono, used by Ghostty config |
+| `font-caskaydia-cove-nerd-font` | cask (macOS) | CaskaydiaCove Nerd Font, used by Ghostty config — on Linux install the Cascadia Code Nerd Font from the distro/image instead |
 
 The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
 
@@ -49,8 +49,19 @@ Quick install of everything:
 
 ```bash
 brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli
-brew install --cask ghostty font-meslo-lg-nerd-font
+brew install --cask ghostty font-caskaydia-cove-nerd-font
 ```
+
+### External (out-of-repo) dependencies
+
+Two things referenced by the `claude` package live outside this repo:
+
+- **`herdr`** — installed via brew (see table above). The `claude/.claude/skills/herdr`
+  symlink points at `~/.agents/skills/herdr`, which herdr itself provisions; until it
+  exists the symlink dangles (harmless).
+- **`moshi-hook`** (`~/.local/bin/moshi-hook`) — machine-local notification helper.
+  All hooks that call it are guarded with an existence check, so machines without it
+  are unaffected.
 
 ## Setup on a new machine
 
@@ -62,8 +73,8 @@ sudo apt install stow        # Debian/Ubuntu
 # sudo pacman -S stow        # Arch
 # sudo dnf install stow      # Fedora
 
-# 2. Clone this repo
-git clone <repo-url> ~/src/dotfiles
+# 2. Clone this repo (with submodules — zsh-vim-mode is a submodule)
+git clone --recurse-submodules <repo-url> ~/src/dotfiles
 cd ~/src/dotfiles
 
 # 3. Install git hooks (runs lint/validation on every commit)
@@ -93,8 +104,8 @@ bootstrap for the `pilot` box is documented in `homelab/ucore/README.md`.
 # 2. Install GNU Stow
 brew install stow
 
-# 3. Clone this repo
-git clone <repo-url> ~/src/dotfiles
+# 3. Clone this repo (with submodules — zsh-vim-mode is a submodule)
+git clone --recurse-submodules <repo-url> ~/src/dotfiles
 cd ~/src/dotfiles
 
 # 4. Install git hooks
@@ -129,11 +140,11 @@ After stowing the `claude` package, install these plugins from within Claude Cod
 
 The `claude` package tracks `settings.json`. The plugin cache and install manifest are machine-local and not tracked.
 
-> **Note:** Some configs contain Linux-specific paths that need adjusting on macOS:
+> **Note:** Configs are portable across machines — no post-stow edits needed:
 >
-> - `zsh/.zshrc` — hardcodes `/home/linuxbrew/` (Homebrew prefix on macOS is `/opt/homebrew`), `/home/tom/` (your macOS username differs), and `/usr/bin/code` (VS Code path on macOS). Edit these after stowing.
-> - `ghostty` — Ghostty is available on macOS; no changes needed.
-> - `starship` — works on macOS without changes.
+> - `zsh/.zshenv` — detects both Homebrew prefixes (`/opt/homebrew` on macOS, `/home/linuxbrew/.linuxbrew` on Linux) automatically.
+> - `claude/.claude/settings.json` — all hook paths are `$HOME`-relative; the `moshi-hook` calls no-op on machines without it.
+> - `ghostty`, `starship` — work everywhere as-is.
 
 If a target file already exists (e.g. `~/.zshrc`), Stow will refuse to overwrite it. Back it up first:
 

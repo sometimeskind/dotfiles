@@ -77,7 +77,7 @@ brew "hashicorp/tap/terraform", trusted: true
 brew "siderolabs/tap/talosctl", trusted: true
 # Terminal-based AI coding assistant
 cask "claude-code"
-cask "font-meslo-lg-nerd-font"
+cask "font-caskaydia-cove-nerd-font"
 vscode "anthropic.claude-code"
 vscode "github.vscode-pull-request-github"
 vscode "hashicorp.terraform"
