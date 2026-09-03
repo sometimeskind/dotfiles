@@ -192,6 +192,29 @@ op run --env-file=.env.tpl -- some-command
 
 `.zshrc` loads secrets from 1Password automatically on shell start (requires `op` to be installed and signed in). Avoid using `~/.secrets` for new machines.
 
+### 1Password-first setup (desktop machines)
+
+The goal is that no long-lived credential lives on disk:
+
+- **CLI auth**: install the 1Password desktop app and enable
+  Settings → Developer → *Integrate with 1Password CLI*. `op` then authorizes
+  via the app (biometric/system auth) — no service-account token file needed.
+- **SSH keys**: enable Settings → Developer → *Use the SSH agent* and keep keys
+  in 1Password. `.zshrc` points `SSH_AUTH_SOCK` at the agent socket
+  automatically when it exists (skipped inside SSH sessions so forwarding
+  still works). No `~/.ssh/id_*` files.
+- **GitHub**: `GH_TOKEN` is read from 1Password lazily on first command
+  (see `_load_op_secrets` in `.zshrc`) — prefer this over `gh auth login`,
+  which stores a token in the keyring/hosts file.
+- **Other CLIs**: use [op shell plugins](https://developer.1password.com/docs/cli/shell-plugins/)
+  (`op plugin init <tool>`) — `.zshrc` sources `~/.config/op/plugins.sh` when
+  present. The plugins file only contains aliases, no secrets, and stays
+  machine-local.
+
+Headless boxes (no desktop app, so no biometric unlock) fall back to a scoped
+read-only **service account** token at `~/.config/op/service-account-token`
+(0600, placed by hand) — see the comment in `.zshrc`.
+
 ## Updating
 
 ```bash
