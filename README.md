@@ -54,8 +54,16 @@ brew install --cask ghostty font-caskaydia-cove-nerd-font
 
 ### External (out-of-repo) dependencies
 
-Two things referenced by the `claude` package live outside this repo:
+Things referenced by the `claude` package that live outside this repo:
 
+- **Claude Code itself** — installed via the official script, NOT brew (the
+  native installer self-updates and works the same on Linux/macOS):
+
+  ```bash
+  curl -fsSL https://claude.ai/install.sh | bash
+  ```
+
+  It lands in `~/.local/bin/claude`, which `.zshenv` already puts on PATH.
 - **`herdr`** — installed via brew (see table above). The `claude/.claude/skills/herdr`
   symlink points at `~/.agents/skills/herdr`, which herdr itself provisions; until it
   exists the symlink dangles (harmless).
