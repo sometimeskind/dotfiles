@@ -51,8 +51,6 @@ brew "pyright"
 brew "ripgrep"
 # Smart session manager for the terminal
 brew "sesh"
-# Editor of encrypted files
-brew "sops"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Terminal multiplexer
@@ -63,8 +61,6 @@ brew "yaml-language-server"
 brew "yamllint"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
-# Pluggable terminal workspace, with terminal multiplexer as the base feature
-brew "zellij"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Fish-like fast/unobtrusive autosuggestions for zsh
@@ -75,8 +71,6 @@ brew "zsh-syntax-highlighting"
 brew "hashicorp/tap/terraform", trusted: true
 # CLI for out-of-band management of Kubernetes nodes created by Talos
 brew "siderolabs/tap/talosctl", trusted: true
-# Terminal-based AI coding assistant
-cask "claude-code"
 cask "font-caskaydia-cove-nerd-font"
 vscode "anthropic.claude-code"
 vscode "github.vscode-pull-request-github"
@@ -91,14 +85,7 @@ go "google.golang.org/grpc/cmd/protoc-gen-go-grpc"
 flatpak "app.zen_browser.zen"
 flatpak "com.nvidia.geforcenow", remote: "GeForceNOW"
 flatpak "com.usebottles.bottles"
-flatpak "com.valvesoftware.Steam"
-flatpak "dev.zed.Zed"
-flatpak "eu.betterbird.Betterbird"
 flatpak "io.github.flattool.Warehouse"
 flatpak "io.github.peazip.PeaZip"
-flatpak "md.obsidian.Obsidian"
-flatpak "org.jellyfin.JellyfinDesktop"
-flatpak "org.mozilla.thunderbird_esr"
-flatpak "org.musicbrainz.Picard"
 npm "@gsd-build/sdk"
 npm "corepack"
