@@ -69,6 +69,7 @@ binds {
 
     Mod+T hotkey-overlay-title="Terminal (Ptyxis)" { spawn "ptyxis" "--new-window"; }
     Mod+B hotkey-overlay-title="Browser (Zen)" { spawn "flatpak" "run" "app.zen_browser.zen"; }
+    Mod+Shift+A hotkey-overlay-title="Claude Code (~/src)" { spawn "ptyxis" "--new-window" "--" "bash" "-lc" "cd ~/src && exec claude"; }
 
     Mod+Q { close-window; }
     Mod+O { toggle-overview; }
@@ -130,6 +131,8 @@ binds {
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
+    Shift+Print hotkey-overlay-title="Region → annotate (swappy)" { spawn "bash" "-c" "grim -g \"$(slurp)\" - | swappy -f -"; }
+    Mod+Print hotkey-overlay-title="Decode QR on screen → clipboard" { spawn "bash" "-c" "grim -g \"$(slurp)\" - | zbarimg --quiet --raw - | wl-copy --trim-newline"; }
 
     Mod+Shift+E { quit; }
     Mod+Shift+P { power-off-monitors; }
