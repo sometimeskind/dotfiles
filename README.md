@@ -84,6 +84,37 @@ else with Homebrew-on-Linux, and stow only the headless packages (`zsh`,
 `starship`, `bat`, `claude`, `nvim`; skip `tmux` and `ghostty`). The full
 bootstrap for the `pilot` box is documented in `homelab/ucore/README.md`.
 
+### Fedora Atomic laptop (niri + DankMaterialShell)
+
+The laptop runs an immutable Fedora (Bluefin-based bootc image) with the
+[niri](https://github.com/niri-wm/niri) compositor and
+[DankMaterialShell](https://danklinux.com/docs/dankmaterialshell) (DMS) as the
+desktop shell. `niri` itself (plus `wl-clipboard` and `cliphist` for the
+clipboard widget) comes from the OS image; the terminal is the image's default
+(Ptyxis — dconf-configured, nothing to stow); the browser is Zen via Flatpak
+(`app.zen_browser.zen`, see Brewfile).
+
+```bash
+# 1. Clone + hooks + brew packages as in the Linux section above
+
+# 2. Install DMS (quickshell, matugen, fonts). Official installer:
+curl -fsSL https://install.danklinux.com | sh
+
+# 3. Stow, then create the DMS include targets BEFORE first niri launch —
+#    config.kdl includes them, and they are gitignored machine state:
+make stow PKG=niri
+mkdir -p ~/.config/niri/dms
+touch ~/.config/niri/dms/{colors,layout,alttab,binds}.kdl
+
+# 4. Generate the DMS niri integration (colors, layout, binds):
+dms setup
+```
+
+DMS shell keybinds (spotlight, lock, notification center, audio/brightness
+keys) live in the generated `dms/binds.kdl`; `niri/.config/niri/config.kdl`
+only defines compositor and app binds. If niri ever reports a duplicate bind
+between the two, the generated file wins — remove ours.
+
 ### macOS
 
 ```bash

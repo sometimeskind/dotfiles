@@ -39,3 +39,6 @@ id_ed25519
 .claude/backups/
 .claude/ide/
 .claude/mcp-needs-auth-cache.json
+
+# DMS-generated niri include files — machine state written by dms setup, not config
+niri/.config/niri/dms/*.kdl
