@@ -170,16 +170,7 @@
     "ralph-loop@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": false,
-    "superpowers@claude-plugins-official": false,
-    "warden@claude-warden": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-warden": {
-      "source": {
-        "source": "github",
-        "repo": "banyudu/claude-warden"
-      }
-    }
+    "superpowers@claude-plugins-official": false
   },
   "effortLevel": "xhigh",
   "feedbackDrafts": "off",

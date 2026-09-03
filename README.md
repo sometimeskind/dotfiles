@@ -125,10 +125,9 @@ After stowing the `claude` package, install these plugins from within Claude Cod
 /plugin install hookify
 /plugin install skill-creator
 /plugin install learning-output-style
-/plugin install warden --from claude-warden
 ```
 
-The `claude` package tracks `warden.yaml` (command allow/block rules) and `settings.json`. The plugin cache and install manifest are machine-local and not tracked.
+The `claude` package tracks `settings.json`. The plugin cache and install manifest are machine-local and not tracked.
 
 > **Note:** Some configs contain Linux-specific paths that need adjusting on macOS:
 >
