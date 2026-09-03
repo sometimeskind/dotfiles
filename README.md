@@ -97,19 +97,23 @@ bootstrap for the `pilot` box is documented in `homelab/ucore/README.md`.
 
 ### Fedora Atomic laptop (niri + DankMaterialShell)
 
-The laptop runs an immutable Fedora (Bluefin-based bootc image) with the
+The laptop runs an immutable Fedora — the custom
+[ublue-niri](https://github.com/sometimeskind/ublue-niri) bootc image
+(Universal Blue `base-main`, i.e. DE-less; not Bluefin) with the
 [niri](https://github.com/niri-wm/niri) compositor and
 [DankMaterialShell](https://danklinux.com/docs/dankmaterialshell) (DMS) as the
-desktop shell. `niri` itself (plus `wl-clipboard` and `cliphist` for the
-clipboard widget) comes from the OS image; the terminal is the image's default
-(Ptyxis — dconf-configured, nothing to stow); the browser is Zen via Flatpak
-(`app.zen_browser.zen`, see Brewfile).
+desktop shell. `niri`, DMS, `wl-clipboard`/`cliphist` (clipboard widget), and
+the Ptyxis terminal (dconf-configured, nothing to stow) all come baked into
+the OS image; the browser is Zen via Flatpak (`app.zen_browser.zen`, see
+Brewfile).
 
 ```bash
-# 1. Clone + hooks + brew packages as in the Linux section above
+# 1. Get on the image (from any Fedora Atomic/bootc install), then reboot:
+sudo bootc switch ghcr.io/sometimeskind/ublue-niri:latest
 
-# 2. Install DMS (quickshell, matugen, fonts). Official installer:
-curl -fsSL https://install.danklinux.com | sh
+# 2. Clone + hooks + brew packages as in the Linux section above.
+#    DMS, quickshell, matugen and fonts are already in the image — no
+#    installer needed.
 
 # 3. Stow, then create the DMS include targets BEFORE first niri launch —
 #    config.kdl includes them, and they are gitignored machine state:
