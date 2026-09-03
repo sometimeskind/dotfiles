@@ -57,14 +57,36 @@ if command -v op &>/dev/null; then
       # </dev/null: with no account configured, op read PROMPTS (invisibly,
       # inside the capture) instead of failing — EOF makes it error out fast.
       GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://pilot-infra/Homelab PAT/token" 2>/dev/null </dev/null)
-      export GITHUB_PERSONAL_ACCESS_TOKEN
-      # gh reads GH_TOKEN, not the name above — export both so gh (and
-      # gh auth setup-git) work with no auth state on disk.
-      export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
+      if [[ -n $GITHUB_PERSONAL_ACCESS_TOKEN ]]; then
+        export GITHUB_PERSONAL_ACCESS_TOKEN
+        # gh reads GH_TOKEN, not the name above — export both so gh (and
+        # gh auth setup-git) work with no auth state on disk.
+        export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
+      else
+        # Vault not available on this machine — don't export empties that
+        # would shadow gh's own keyring auth.
+        unset GITHUB_PERSONAL_ACCESS_TOKEN
+      fi
     fi
   }
   autoload -U add-zsh-hook
   add-zsh-hook preexec _load_op_secrets
+
+  # op shell plugins (op plugin init <tool>) — wrap CLIs so their tokens
+  # come from 1Password per invocation instead of living on disk.
+  [[ -f $HOME/.config/op/plugins.sh ]] && source "$HOME/.config/op/plugins.sh"
+fi
+
+# ── 1Password SSH agent (desktop app, Settings → Developer → SSH agent) ───────
+# Private keys live in 1Password, never on disk. Skipped inside SSH sessions
+# so a forwarded agent keeps working; no-op where the socket doesn't exist
+# (headless boxes).
+if [[ -z $SSH_CONNECTION ]]; then
+  if [[ -S $HOME/.1password/agent.sock ]]; then
+    export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
+  elif [[ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]]; then
+    export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  fi
 fi
 
 command -v kubectl &>/dev/null && source <(kubectl completion zsh) && compdef k=kubectl
