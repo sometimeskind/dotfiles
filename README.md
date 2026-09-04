@@ -123,11 +123,15 @@ sudo bootc switch ghcr.io/sometimeskind/ublue-niri:latest
 #    DMS, quickshell, matugen and fonts are already in the image — no
 #    installer needed.
 
-# 3. Generate the DMS include files (gitignored machine state). Use the
-#    per-file subcommands — bare `dms setup` overwrites config.kdl through
-#    the stow symlink, and its terminal/systemd prompts are moot here (DMS
-#    runs via the dms.service user unit the image enables globally):
-dms setup colors && dms setup layout && dms setup alttab && dms setup binds
+# 3. Generate the DMS include files (gitignored machine state). Per-file
+#    subcommands only — bare `dms setup` overwrites config.kdl through the
+#    stow symlink. The running shell pre-creates some of them (colors.kdl
+#    regenerates from the wallpaper at runtime) and dms refuses to
+#    overwrite a non-empty file, so only generate what's missing:
+export DMS_PRIVESC=sudo  # skip the sudo/run0 chooser prompt
+for f in colors layout alttab binds; do
+  [ -s ~/.config/niri/dms/$f.kdl ] || dms setup $f
+done
 
 # 4. Stow. Logging in at all starts niri (greetd's only session), which
 #    drops a default config.kdl; zsh's first run may drop a .zshrc. Both
