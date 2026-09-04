@@ -123,8 +123,11 @@ sudo bootc switch ghcr.io/sometimeskind/ublue-niri:latest
 #    DMS, quickshell, matugen and fonts are already in the image — no
 #    installer needed.
 
-# 3. Stow, then create the DMS include targets BEFORE first niri launch —
-#    config.kdl includes them, and they are gitignored machine state:
+# 3. Stow. Logging in at all starts niri (greetd's only session), which
+#    drops a default config.kdl; zsh's first run may drop a .zshrc. Both
+#    block stow — remove them, then create the DMS include targets
+#    (gitignored machine state) before the stowed config is used:
+rm -f ~/.config/niri/config.kdl ~/.zshrc
 make stow PKG=niri
 mkdir -p ~/.config/niri/dms
 touch ~/.config/niri/dms/{colors,layout,alttab,binds}.kdl
