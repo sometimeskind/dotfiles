@@ -123,20 +123,17 @@ sudo bootc switch ghcr.io/sometimeskind/ublue-niri:latest
 #    DMS, quickshell, matugen and fonts are already in the image — no
 #    installer needed.
 
-# 3. Stow. Logging in at all starts niri (greetd's only session), which
+# 3. Generate the DMS include files (gitignored machine state). Use the
+#    per-file subcommands — bare `dms setup` overwrites config.kdl through
+#    the stow symlink, and its terminal/systemd prompts are moot here (DMS
+#    runs via the dms.service user unit the image enables globally):
+dms setup colors && dms setup layout && dms setup alttab && dms setup binds
+
+# 4. Stow. Logging in at all starts niri (greetd's only session), which
 #    drops a default config.kdl; zsh's first run may drop a .zshrc. Both
-#    block stow — remove them, then create the DMS include targets
-#    (gitignored machine state) before the stowed config is used:
+#    block stow — remove them first:
 rm -f ~/.config/niri/config.kdl ~/.zshrc
 make stow PKG=niri
-mkdir -p ~/.config/niri/dms
-touch ~/.config/niri/dms/{colors,layout,alttab,binds}.kdl
-
-# 4. Generate the DMS niri integration (colors, layout, binds). At the
-#    prompts: terminal "none" (Ptyxis is dconf-configured, DMS doesn't offer
-#    it) and systemd "no" — the image already enables the dms.service user
-#    unit globally, so DMS is systemd-managed without any per-user setup:
-dms setup
 ```
 
 DMS shell keybinds (spotlight, lock, notification center, audio/brightness
