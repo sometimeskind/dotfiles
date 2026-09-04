@@ -132,7 +132,10 @@ make stow PKG=niri
 mkdir -p ~/.config/niri/dms
 touch ~/.config/niri/dms/{colors,layout,alttab,binds}.kdl
 
-# 4. Generate the DMS niri integration (colors, layout, binds):
+# 4. Generate the DMS niri integration (colors, layout, binds). At the
+#    prompts: terminal "none" (Ptyxis is dconf-configured, DMS doesn't offer
+#    it) and systemd "no" — the image already enables the dms.service user
+#    unit globally, so DMS is systemd-managed without any per-user setup:
 dms setup
 ```
 

@@ -43,8 +43,9 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
 
-// DMS is the desktop shell.
-spawn-at-startup "dms" "run"
+// DMS (the desktop shell) is NOT spawned here: the ublue-niri image enables
+// the dms.service user unit globally (restart-on-crash, journalctl --user -u
+// dms), pulled in via graphical-session.target when niri-session starts.
 // Clipboard history for the DMS clipboard widget.
 spawn-at-startup "bash" "-c" "wl-paste --watch cliphist store &"
 
