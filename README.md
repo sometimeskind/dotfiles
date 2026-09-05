@@ -193,7 +193,7 @@ The `claude` package tracks `settings.json`. The plugin cache and install manife
 > **Note:** Configs are portable across machines — no post-stow edits needed:
 >
 > - `zsh/.zshenv` — detects both Homebrew prefixes (`/opt/homebrew` on macOS, `/home/linuxbrew/.linuxbrew` on Linux) automatically.
-> - `claude/.claude/settings.json` — all hook paths are `$HOME`-relative; the `moshi-hook` calls no-op on machines without it.
+> - `claude/.claude/settings.json` — hook script paths are `$HOME`-relative; the `moshi-hook` calls resolve via PATH (`~/.local/bin` on pilot, `/usr/bin` on the laptop image) and no-op on machines without it. Note `moshi-hook install` would rewrite them machine-specific (and replace the stow symlink with a plain file) — don't run it; its `status` marking the hooks "stale" over this guard is cosmetic.
 > - `ghostty`, `starship` — work everywhere as-is.
 
 If a target file already exists (e.g. `~/.zshrc`), Stow will refuse to overwrite it. Back it up first:
