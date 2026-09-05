@@ -1,181 +1,4 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(git restore:*)"
-    ]
-  },
-  "model": "claude-fable-5[1m]",
-  "hooks": {
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/block-dash-separators.sh"
-          },
-          {
-            "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
-          },
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": false
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/nvim-sync.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "AskUserQuestion",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/block-dash-separators.sh"
-          },
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/block-admin-kubeconfig.sh"
-          },
-          {
-            "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
-          }
-        ]
-      },
-      {
-        "matcher": "AskUserQuestion",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/herdr-agent-state.sh\" session",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/moshi-hook\" ] && \"$HOME/.local/bin/moshi-hook\" claude-hook || true",
-            "async": true
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0
-  },
-  "enabledPlugins": {
-    "claude-code-setup@claude-plugins-official": false,
-    "claude-md-management@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": false,
-    "hookify@claude-plugins-official": false,
-    "learning-output-style@claude-plugins-official": false,
-    "commit-commands@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true,
-    "plugin-dev@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": false,
-    "superpowers@claude-plugins-official": false
-  },
-  "effortLevel": "xhigh",
-  "feedbackDrafts": "off",
-  "theme": "auto",
-  "tui": "fullscreen",
   "autoMode": {
     "allow": [
       "$defaults",
@@ -184,12 +7,6 @@
       "Bash(kubectl port-forward -n sealed-secrets svc/sealed-secrets:*)",
       "Bash(gh pr checks:*)",
       "Bash(terraform -chdir=talos fmt -check -recursive)"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(talosctl upgrade-k8s:*)",
-      "Bash(talosctl upgrade:*)",
-      "Bash(kubectl delete -n argocd:*)"
     ],
     "environment": [
       "### Org-wide",
@@ -206,7 +23,7 @@
       "**Trusted cloud buckets**: Backblaze B2 `prins-id-homelab-terraform-state` (Terraform remote state, endpoint s3.eu-central-003.backblazeb2.com) (config-derived — not a confirmed upload destination; uploads of local data still require confirmation); Backblaze B2 `prins-id-homelab-postgres-backup` (CNPG/Barman backups) (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
       "**Key internal services**: ArgoCD (argocd ns), Sealed Secrets (sealed-secrets ns), Grafana/Prometheus (monitoring ns), cert-manager + deSEC webhook, Gateway API gateways (gateways ns), Velero, OpenEBS, CloudNativePG/MariaDB, Home Assistant, Music Assistant, Navidrome, Immich, Paperless, Firefly III, maddy/Proton Bridge mail stack (mail ns), Prefect, Ollama, Omada controller, UptimeRobot external monitors",
       "**Internal package registry**: ghcr.io/sometimeskind (bridge-monitor, music-pipeline images)",
-      "**Sensitive data locations & audiences**: `kubernetes/secrets/` (gitignored except *.md); all `*-secret.yaml` / SealedSecret manifests under `kubernetes/` (mail, davis, firefly-iii, immich, grimmory, mariadb, monitoring, home-assistant, argocd-bootstrap); Terraform state and tfvars (`backblaze/terraform.tfvars`, `cloudflare/terraform.tfvars`, `cloudflare/terraform.tfstate*`, `talos/backend.hcl`, `.terraform/terraform.tfstate`); `.env`; admin kubeconfig `~/.kube/admin.yaml`; personal mail and documents handled by the mail/paperless pipelines (Proton mail, scanned documents, IMAP exports from `export-tagged-emails.py`); financial data in Firefly III; photos in Immich. Share only with audiences cleared at the [named+specifics] bar — default audience is the single admin (this user).",
+      "**Sensitive data locations \u0026 audiences**: `kubernetes/secrets/` (gitignored except *.md); all `*-secret.yaml` / SealedSecret manifests under `kubernetes/` (mail, davis, firefly-iii, immich, grimmory, mariadb, monitoring, home-assistant, argocd-bootstrap); Terraform state and tfvars (`backblaze/terraform.tfvars`, `cloudflare/terraform.tfvars`, `cloudflare/terraform.tfstate*`, `talos/backend.hcl`, `.terraform/terraform.tfstate`); `.env`; admin kubeconfig `~/.kube/admin.yaml`; personal mail and documents handled by the mail/paperless pipelines (Proton mail, scanned documents, IMAP exports from `export-tagged-emails.py`); financial data in Firefly III; photos in Immich. Share only with audiences cleared at the [named+specifics] bar — default audience is the single admin (this user).",
       "**Data retention / declassification**: None configured",
       "**Sensitive remote targets**: the live homelab cluster is the production environment despite no `prod` naming — treat writes to the cluster via kubectl/helm/talosctl, the OPNsense router, and any namespace hosting personal data (mail, paperless, immich, firefly-iii, grimmory, mariadb, cloudnativepg) as sensitive; plus any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
       "**Protected deployment namespaces / environments**: argocd, sealed-secrets, kube-system, gateways, cert-manager, mail, monitoring, and the OPNsense host — changes go through git + ArgoCD, never direct kubectl mutation",
@@ -217,6 +34,205 @@
       "**Org-specific CLIs**: kubectl (dominant), talosctl, terraform, kubeseal, gh, cilium, velero, tailscale, dig/host, just, op (1Password), beet, adb, yq, plus repo scripts under `scripts/` (cluster-health.sh, velero-status.sh, hubble-drops.sh, b2-init.sh, reseal-all.sh, opnsense-net-diag.sh, paperless-*.py)",
       "**routine under scripts/ prefix**: read-only diagnostics in `scripts/` and `scripts/health/` (cluster-health.sh, velero-status.sh, hubble-drops.sh, paperless-match-probe.py) are routine; state-changing scripts (reseal-all.sh, cnpg-restore.sh, velero-restore.sh, talos-upgrade.sh, davis-migrate-webdav.sh, argocd-pause.sh) are not",
       "**Never use the admin kubeconfig**: `~/.kube/admin.yaml` is user-run only — surface the command instead of running it"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(talosctl upgrade-k8s:*)",
+      "Bash(talosctl upgrade:*)",
+      "Bash(kubectl delete -n argocd:*)"
     ]
-  }
+  },
+  "effortLevel": "xhigh",
+  "enabledPlugins": {
+    "claude-code-setup@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "explanatory-output-style@claude-plugins-official": false,
+    "hookify@claude-plugins-official": false,
+    "learning-output-style@claude-plugins-official": false,
+    "mattpocock-skills@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": false,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": false
+  },
+  "feedbackDrafts": "off",
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ],
+        "matcher": "permission_prompt"
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/block-dash-separators.sh",
+            "type": "command"
+          },
+          {
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "async": false,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/nvim-sync.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit|MultiEdit"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ],
+        "matcher": "AskUserQuestion"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ],
+        "matcher": "ExitPlanMode"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/block-dash-separators.sh",
+            "type": "command"
+          },
+          {
+            "command": "$HOME/.claude/hooks/block-admin-kubeconfig.sh",
+            "type": "command"
+          },
+          {
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' \u0026\u0026 [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' \u0026\u0026 exit 1; fi",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ],
+        "matcher": "AskUserQuestion"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ],
+        "matcher": "ExitPlanMode"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "bash \"$HOME/.claude/hooks/herdr-agent-state.sh\" session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
+  "model": "claude-fable-5[1m]",
+  "permissions": {
+    "allow": [
+      "Bash(git restore:*)"
+    ]
+  },
+  "statusLine": {
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "type": "command"
+  },
+  "theme": "auto",
+  "tui": "fullscreen"
 }
