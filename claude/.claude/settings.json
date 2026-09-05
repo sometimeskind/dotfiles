@@ -67,7 +67,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ],
@@ -91,7 +91,7 @@
         "hooks": [
           {
             "async": false,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ]
@@ -111,7 +111,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ],
@@ -121,7 +121,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ],
@@ -150,7 +150,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ],
@@ -160,7 +160,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ],
@@ -172,7 +172,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ]
@@ -193,7 +193,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ]
@@ -204,7 +204,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ]
@@ -215,7 +215,7 @@
         "hooks": [
           {
             "async": true,
-            "command": "'/var/home/core/.local/bin/moshi-hook' claude-hook",
+            "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "type": "command"
           }
         ]
