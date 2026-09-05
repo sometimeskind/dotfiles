@@ -15,10 +15,6 @@
           },
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/block-admin-kubeconfig.sh"
-          },
-          {
-            "type": "command",
             "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git push' && [[ $(git branch --show-current) == 'main' || $(git branch --show-current) == 'trunk' ]]; then echo 'BLOCK: Currently on main/trunk branch. Switch to a feature branch first.' && exit 1; fi"
           },
           {
@@ -67,6 +63,10 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/block-dash-separators.sh"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/block-admin-kubeconfig.sh"
           },
           {
             "type": "command",
