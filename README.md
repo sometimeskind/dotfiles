@@ -278,6 +278,21 @@ The goal is that no long-lived credential lives on disk:
   Creating `~/.ssh` before `make stow PKG=ssh` also keeps Stow from folding
   all of `~/.ssh` (and future `known_hosts`/`authorized_keys`) into the repo
   as a directory symlink.
+- **Break-glass key**: everything above depends on 1Password being
+  available, so keep one hardware-bound fallback key on a YubiKey — a
+  1Password lockout then never means an SSH lockout. Generated on and never
+  leaves the YubiKey; needs OpenSSH ≥ 8.2 on both ends, touch + PIN to use
+  (`verify-required` matters: without it, anyone holding the stick can load
+  a resident key with `ssh-keygen -K`):
+
+  ```bash
+  ssh-keygen -t ed25519-sk -O resident -O verify-required -C yubikey-breakglass
+  ```
+
+  Add the `.pub` to GitHub and the inbound-SSH import above authorizes it
+  everywhere. The local `id_ed25519_sk` file is only a handle, not a secret
+  — a resident key regenerates it on any machine with `ssh-keygen -K`, so
+  there is nothing to back up or sync.
 - **GitHub**: `GH_TOKEN` is read from 1Password lazily on first command
   (see `_load_op_secrets` in `.zshrc`) — prefer this over `gh auth login`,
   which stores a token in the keyring/hosts file.
