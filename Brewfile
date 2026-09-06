@@ -51,6 +51,8 @@ brew "pyright"
 brew "ripgrep"
 # Smart session manager for the terminal
 brew "sesh"
+# Securely retrieve SSH public keys from GitHub into authorized_keys
+brew "ssh-import-id"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Terminal multiplexer

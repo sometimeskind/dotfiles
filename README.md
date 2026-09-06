@@ -39,6 +39,7 @@ These are the Homebrew packages assumed by configs in this repo.
 | `zoxide` | formula | smarter `cd` with frecency tracking (`z`/`zi`) |
 | `eza` | formula | better `ls` with icons and git status |
 | `1password-cli` | formula | `op` CLI — lazy-loads secrets into shell on start |
+| `ssh-import-id` | formula | pulls public keys from GitHub into `~/.ssh/authorized_keys` for inbound SSH |
 | `font-caskaydia-cove-nerd-font` | cask (macOS) | CaskaydiaCove Nerd Font, used by Ghostty config — on Linux install the Cascadia Code Nerd Font from the distro/image instead |
 
 The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
@@ -48,7 +49,7 @@ Also needed for neovim: neovim, rg, lazygit, luarocks, ast-grep, lua
 Quick install of everything:
 
 ```bash
-brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli
+brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli ssh-import-id
 brew install --cask ghostty font-caskaydia-cove-nerd-font
 ```
 
@@ -264,6 +265,17 @@ The goal is that no long-lived credential lives on disk:
   in 1Password. `.zshrc` points `SSH_AUTH_SOCK` at the agent socket
   automatically when it exists (skipped inside SSH sessions so forwarding
   still works). No `~/.ssh/id_*` files.
+- **Inbound SSH**: no private keys on disk means nothing to copy — sshd only
+  needs public keys, and GitHub already has them:
+
+  ```bash
+  sudo systemctl enable --now sshd
+  ssh-import-id gh:sometimeskind   # idempotent; re-run after adding a key
+  ```
+
+  Before `make stow PKG=ssh`, run `mkdir -p ~/.ssh && chmod 700 ~/.ssh` so
+  Stow symlinks only the config file instead of folding all of `~/.ssh`
+  (and future `known_hosts`/`authorized_keys`) into the repo.
 - **GitHub**: `GH_TOKEN` is read from 1Password lazily on first command
   (see `_load_op_secrets` in `.zshrc`) — prefer this over `gh auth login`,
   which stores a token in the keyring/hosts file.
