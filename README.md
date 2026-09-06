@@ -39,7 +39,6 @@ These are the Homebrew packages assumed by configs in this repo.
 | `zoxide` | formula | smarter `cd` with frecency tracking (`z`/`zi`) |
 | `eza` | formula | better `ls` with icons and git status |
 | `1password-cli` | formula | `op` CLI — lazy-loads secrets into shell on start |
-| `ssh-import-id` | formula | pulls public keys from GitHub into `~/.ssh/authorized_keys` for inbound SSH |
 | `font-caskaydia-cove-nerd-font` | cask (macOS) | CaskaydiaCove Nerd Font, used by Ghostty config — on Linux install the Cascadia Code Nerd Font from the distro/image instead |
 
 The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
@@ -49,7 +48,7 @@ Also needed for neovim: neovim, rg, lazygit, luarocks, ast-grep, lua
 Quick install of everything:
 
 ```bash
-brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli ssh-import-id
+brew install stow starship herdr tmux bat fzf fd zoxide eza 1password-cli
 brew install --cask ghostty font-caskaydia-cove-nerd-font
 ```
 
@@ -266,16 +265,19 @@ The goal is that no long-lived credential lives on disk:
   automatically when it exists (skipped inside SSH sessions so forwarding
   still works). No `~/.ssh/id_*` files.
 - **Inbound SSH**: no private keys on disk means nothing to copy — sshd only
-  needs public keys, and GitHub already has them:
+  needs public keys, and GitHub already has them (no `ssh-import-id` in
+  Homebrew, so plain curl):
 
   ```bash
   sudo systemctl enable --now sshd
-  ssh-import-id gh:sometimeskind   # idempotent; re-run after adding a key
+  mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys
+  # idempotent; re-run after adding a key to GitHub
+  sort -u -o ~/.ssh/authorized_keys ~/.ssh/authorized_keys <(curl -s https://github.com/sometimeskind.keys)
   ```
 
-  Before `make stow PKG=ssh`, run `mkdir -p ~/.ssh && chmod 700 ~/.ssh` so
-  Stow symlinks only the config file instead of folding all of `~/.ssh`
-  (and future `known_hosts`/`authorized_keys`) into the repo.
+  Creating `~/.ssh` before `make stow PKG=ssh` also keeps Stow from folding
+  all of `~/.ssh` (and future `known_hosts`/`authorized_keys`) into the repo
+  as a directory symlink.
 - **GitHub**: `GH_TOKEN` is read from 1Password lazily on first command
   (see `_load_op_secrets` in `.zshrc`) — prefer this over `gh auth login`,
   which stores a token in the keyring/hosts file.
