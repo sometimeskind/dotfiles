@@ -20,25 +20,15 @@ id_rsa
 id_ed25519
 .secrets
 
-# Claude runtime data — not config
-.claude/history.jsonl
-.claude/.credentials.json
-.claude/cache/
-.claude/debug/
-.claude/file-history/
-.claude/paste-cache/
-.claude/plans/
-.claude/projects/
-.claude/session-env/
-.claude/shell-snapshots/
-.claude/stats-cache.json
-.claude/tasks/
-.claude/telemetry/
-.claude/todos/
-.claude/usage-data/
-.claude/backups/
-.claude/ide/
-.claude/mcp-needs-auth-cache.json
+# Claude runtime data — not config. On a fresh machine stow folds ~/.claude
+# into a single symlink to claude/.claude, so everything Claude Code writes
+# (credentials, sessions, caches, plugins, ...) lands in this checkout.
+# Ignore it all and allowlist only the tracked config entries.
+claude/.claude/*
+!claude/.claude/CLAUDE.md
+!claude/.claude/hooks/
+!claude/.claude/settings.json
+!claude/.claude/skills/
 
 # DMS-generated niri include files — machine state written by dms setup, not config
 niri/.config/niri/dms/*.kdl
