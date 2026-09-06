@@ -32,3 +32,10 @@ claude/.claude/*
 
 # DMS-generated niri include files — machine state written by dms setup, not config
 niri/.config/niri/dms/*.kdl
+
+# DMS settings: only settings.json is config. The directory is stowed folded
+# (one symlink) because DMS saves atomically via temp file + rename, which
+# would replace a file-level symlink. Everything else DMS drops next to it
+# (browser theme CSS, first-launch/changelog markers, plugins) is derived.
+dms/.config/DankMaterialShell/*
+!dms/.config/DankMaterialShell/settings.json

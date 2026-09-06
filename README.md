@@ -140,12 +140,26 @@ done
 #    block stow — remove them first:
 rm -f ~/.config/niri/config.kdl ~/.zshrc
 make stow PKG=niri
+
+# 5. DMS settings. DMS's first launch also creates ~/.config/DankMaterialShell;
+#    remove it so the tracked directory folds into a single symlink (DMS saves
+#    settings.json atomically, temp file + rename, so a file-level symlink
+#    would be replaced by a plain file on the first change):
+rm -rf ~/.config/DankMaterialShell
+make stow PKG=dms
 ```
 
 DMS shell keybinds (spotlight, lock, notification center, audio/brightness
 keys) live in the generated `dms/binds.kdl`; `niri/.config/niri/config.kdl`
 only defines compositor and app binds. If niri ever reports a duplicate bind
 between the two, the generated file wins — remove ours.
+
+DMS settings themselves live in `~/.config/DankMaterialShell/settings.json`,
+tracked by the `dms` package. Change them in the DMS settings UI or by hand
+(DMS watches the file and hot-reloads it), then commit the diff; the file only
+holds values that differ from defaults. The other files DMS writes in that
+directory (browser theme CSS, first-launch markers) are gitignored, and the
+niri includes under `~/.config/niri/dms/` are regenerated from it.
 
 ### macOS
 
