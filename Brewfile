@@ -1,5 +1,4 @@
 tap "hashicorp/tap"
-tap "minio/stable"
 tap "siderolabs/tap", trusted: true
 # GitOps Continuous Delivery for Kubernetes
 brew "argocd"

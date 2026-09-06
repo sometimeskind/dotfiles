@@ -39,7 +39,7 @@ These are the Homebrew packages assumed by configs in this repo.
 | `zoxide` | formula | smarter `cd` with frecency tracking (`z`/`zi`) |
 | `eza` | formula | better `ls` with icons and git status |
 | `1password-cli` | formula | `op` CLI — lazy-loads secrets into shell on start |
-| `font-caskaydia-cove-nerd-font` | cask (macOS) | CaskaydiaCove Nerd Font, used by Ghostty config — on Linux install the Cascadia Code Nerd Font from the distro/image instead |
+| `font-caskaydia-cove-nerd-font` | cask | CaskaydiaCove Nerd Font, used by Ghostty config — Homebrew installs font casks on Linux too (into `~/.local/share/fonts`); the laptop image also ships Cascadia Code NF |
 
 The shell enhancement tools (`fzf`, `fd`, `zoxide`, `eza`) are all optional — `.zshrc` guards each one with `command -v` and degrades gracefully if they are absent.
 
@@ -121,7 +121,9 @@ sudo bootc switch ghcr.io/sometimeskind/ublue-niri:latest
 
 # 2. Clone + hooks + brew packages as in the Linux section above.
 #    DMS, quickshell, matugen and fonts are already in the image — no
-#    installer needed.
+#    installer needed. So are Homebrew's system C toolchain (needed for
+#    the gcc post-install and for tap formulae without bottles such as
+#    terraform/talosctl) and NVIDIA's GeForce NOW Flatpak remote.
 
 # 3. Generate the DMS include files (gitignored machine state). Per-file
 #    subcommands only — bare `dms setup` overwrites config.kdl through the
