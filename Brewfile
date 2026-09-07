@@ -58,6 +58,8 @@ brew "tmux"
 brew "yaml-language-server"
 # Linter for YAML files
 brew "yamllint"
+# Tool for managing your YubiKey configuration
+brew "ykman"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
 # Shell extension to navigate your filesystem faster
