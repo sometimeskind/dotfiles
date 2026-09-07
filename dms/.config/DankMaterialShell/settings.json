@@ -1,8 +1,13 @@
 {
-  "cornerRadius": 12,
+  "currentThemeName": "dynamic",
+  "currentThemeCategory": "dynamic",
+  "cornerRadius": 4,
+  "niriLayoutGapsOverride": -2,
+  "blurBorderEnabled": false,
   "blurWallpaperOnOverview": true,
   "controlCenterShowMicPercent": true,
   "appIdSubstitutions": [],
+  "weatherEnabled": false,
   "cursorSettings": {
     "theme": "System Default",
     "size": 24,
@@ -19,6 +24,41 @@
       "cursorHideTimeout": 0
     }
   },
+  "acMonitorTimeout": 1200,
+  "acLockTimeout": 900,
+  "acPostLockMonitorTimeout": 300,
+  "dankIslandBarId": "default",
+  "dankIslandPalette": "dim",
+  "dankIslandHomeLayout": [
+    {
+      "id": "media",
+      "enabled": false
+    },
+    {
+      "id": "clock",
+      "enabled": true
+    },
+    {
+      "id": "weather",
+      "enabled": false
+    },
+    {
+      "id": "status",
+      "enabled": false
+    },
+    {
+      "id": "volume",
+      "enabled": false
+    },
+    {
+      "id": "brightness",
+      "enabled": false
+    },
+    {
+      "id": "notifications",
+      "enabled": false
+    }
+  ],
   "osdPowerProfileEnabled": true,
   "screenPreferences": {
     "wallpaper": [
@@ -29,7 +69,7 @@
     {
       "id": "default",
       "name": "Main Bar",
-      "enabled": true,
+      "enabled": false,
       "position": 0,
       "screenPreferences": [
         "all"
@@ -59,11 +99,11 @@
       "barInsetPadding": -1,
       "barLengthPadding": 0,
       "bottomGap": 0,
-      "attachToScreenEdge": false,
+      "attachToScreenEdge": true,
       "transparency": 1,
       "widgetTransparency": 1,
       "squareCorners": false,
-      "noBackground": false,
+      "noBackground": true,
       "maximizeWidgetIcons": false,
       "maximizeWidgetText": false,
       "removeWidgetPadding": false,
@@ -129,6 +169,20 @@
     "hslSaturation": 0,
     "hslLightness": 1,
     "valid": true
+  },
+  "builtInPluginSettings": {
+    "dms_settings_search": {
+      "trigger": "?"
+    },
+    "dms_clipboard_search": {
+      "trigger": "cb"
+    },
+    "dms_power": {
+      "trigger": "pw"
+    },
+    "dms_qr_generator": {
+      "trigger": "qrg"
+    }
   },
   "configVersion": 17
 }
