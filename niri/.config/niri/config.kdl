@@ -29,6 +29,13 @@ input {
 
 layout {
     gaps 8
+    // Cancel the outer gaps (screen edges); keep the 8px between windows.
+    struts {
+        left -8
+        right -8
+        top -8
+        bottom -8
+    }
     center-focused-column "never"
     preset-column-widths {
         proportion 0.33333
@@ -36,6 +43,7 @@ layout {
         proportion 0.66667
     }
     default-column-width { proportion 0.5; }
+    focus-ring { off; }
 }
 
 environment {
