@@ -117,15 +117,21 @@ gvfs). The other GNOME core apps are Flathub Flatpaks in the Brewfile — the
 current GNOME defaults, not their GTK3-era predecessors: Loupe (images, was
 eog), Papers (PDF, was Evince), Showtime (video, was Totem), Decibels (audio
 files, was Rhythmbox — no library; add Amberol or GNOME Music if one is
-wanted). The browser is Zen via Flatpak (`app.zen_browser.zen`, see Brewfile).
+wanted), plus the small GNOME utilities (Calculator, Calendar, Clocks,
+Weather, Maps, Snapshot, Disk Usage Analyzer, Font Viewer, Nautilus
+Previewer) and Fedora Media Writer. The browser is Zen via Flatpak
+(`app.zen_browser.zen`, see Brewfile).
 
 A machine rebased from Fedora Silverblue keeps its old `fedora`-remote
-Flatpaks (Loupe, Papers, Text Editor, Calculator, …); `brew bundle` will
-refuse to install the Flathub copy over one of those, so switch the remote
-first:
+Flatpaks, which lag Flathub and are invisible to the Brewfile. `brew bundle`
+refuses to install a Flathub copy over one of those, so switch the remote
+for the ones kept and drop the rest (Extensions is GNOME-Shell-only, Text
+Editor and Characters duplicate DMS's notepad and emoji picker):
 
 ```bash
-flatpak install -y --reinstall flathub org.gnome.Loupe org.gnome.Papers
+flatpak uninstall -y org.gnome.Extensions org.gnome.TextEditor org.gnome.Characters org.gnome.Contacts org.gnome.Connections org.gnome.Logs
+flatpak install -y --reinstall flathub $(flatpak list --app --columns=application,origin | awk '$2=="fedora"{print $1}')
+flatpak uninstall -y --unused && flatpak remote-delete fedora
 ```
 
 ```bash
