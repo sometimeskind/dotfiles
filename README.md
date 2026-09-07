@@ -112,8 +112,31 @@ The laptop runs an immutable Fedora — the custom
 [DankMaterialShell](https://danklinux.com/docs/dankmaterialshell) (DMS) as the
 desktop shell. `niri`, DMS, `wl-clipboard`/`cliphist` (clipboard widget), and
 the Ptyxis terminal (dconf-configured, nothing to stow) all come baked into
-the OS image; the browser is Zen via Flatpak (`app.zen_browser.zen`, see
-Brewfile).
+the OS image, as is the Nautilus file manager (not on Flathub, needs host
+gvfs). The other GNOME core apps are Flathub Flatpaks in the Brewfile — the
+current GNOME defaults, not their GTK3-era predecessors: Loupe (images, was
+eog), Papers (PDF, was Evince), Showtime (video, was Totem), Decibels (audio
+files, was Rhythmbox — no library; add Amberol or GNOME Music if one is
+wanted), plus the small GNOME utilities (Calculator, Calendar, Clocks,
+Weather, Maps, Snapshot, Disk Usage Analyzer, Font Viewer, Nautilus
+Previewer) and Fedora Media Writer. The browser is Zen via Flatpak
+(`app.zen_browser.zen`, see Brewfile).
+
+A machine rebased from Fedora Silverblue keeps its old `fedora`-remote
+Flatpaks, which lag Flathub and are invisible to the Brewfile. `brew bundle`
+refuses to install a Flathub copy over one of those, so switch the remote
+for the ones kept and drop the rest (Extensions is GNOME-Shell-only, Text
+Editor and Characters duplicate DMS's notepad and emoji picker). Uninstall
+then install rather than `--reinstall`: Flatpak compares commit timestamps
+and refuses a Flathub build older than the Fedora one. App data in
+`~/.var/app` survives the uninstall.
+
+```bash
+flatpak uninstall -y org.gnome.Extensions org.gnome.TextEditor org.gnome.Characters org.gnome.Contacts org.gnome.Connections org.gnome.Logs
+keep=$(flatpak list --app --columns=application,origin | awk '$2=="fedora"{print $1}')
+flatpak uninstall -y $keep && flatpak install -y flathub $keep
+flatpak uninstall -y --unused && flatpak remote-delete fedora
+```
 
 ```bash
 # 1. Get on the image (from any Fedora Atomic/bootc install), then reboot:
