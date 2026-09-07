@@ -112,8 +112,21 @@ The laptop runs an immutable Fedora — the custom
 [DankMaterialShell](https://danklinux.com/docs/dankmaterialshell) (DMS) as the
 desktop shell. `niri`, DMS, `wl-clipboard`/`cliphist` (clipboard widget), and
 the Ptyxis terminal (dconf-configured, nothing to stow) all come baked into
-the OS image; the browser is Zen via Flatpak (`app.zen_browser.zen`, see
-Brewfile).
+the OS image, as is the Nautilus file manager (not on Flathub, needs host
+gvfs). The other GNOME core apps are Flathub Flatpaks in the Brewfile — the
+current GNOME defaults, not their GTK3-era predecessors: Loupe (images, was
+eog), Papers (PDF, was Evince), Showtime (video, was Totem), Decibels (audio
+files, was Rhythmbox — no library; add Amberol or GNOME Music if one is
+wanted). The browser is Zen via Flatpak (`app.zen_browser.zen`, see Brewfile).
+
+A machine rebased from Fedora Silverblue keeps its old `fedora`-remote
+Flatpaks (Loupe, Papers, Text Editor, Calculator, …); `brew bundle` will
+refuse to install the Flathub copy over one of those, so switch the remote
+first:
+
+```bash
+flatpak install -y --reinstall flathub org.gnome.Loupe org.gnome.Papers
+```
 
 ```bash
 # 1. Get on the image (from any Fedora Atomic/bootc install), then reboot:
