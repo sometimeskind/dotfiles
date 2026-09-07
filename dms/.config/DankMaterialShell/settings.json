@@ -27,6 +27,7 @@
   "acMonitorTimeout": 1200,
   "acLockTimeout": 900,
   "acPostLockMonitorTimeout": 300,
+  "lockAtStartup": true,
   "dankIslandBarId": "default",
   "dankIslandPalette": "dim",
   "dankIslandHomeLayout": [
