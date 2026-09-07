@@ -234,5 +234,10 @@
       "**routine under scripts/ prefix**: read-only diagnostics in `scripts/` and `scripts/health/` (cluster-health.sh, velero-status.sh, hubble-drops.sh, paperless-match-probe.py) are routine; state-changing scripts (reseal-all.sh, cnpg-restore.sh, velero-restore.sh, talos-upgrade.sh, davis-migrate-webdav.sh, argocd-pause.sh) are not",
       "**Never use the admin kubeconfig**: `~/.kube/admin.yaml` is user-run only — surface the command instead of running it"
     ]
+  },
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
   }
 }
