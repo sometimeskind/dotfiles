@@ -126,11 +126,15 @@ A machine rebased from Fedora Silverblue keeps its old `fedora`-remote
 Flatpaks, which lag Flathub and are invisible to the Brewfile. `brew bundle`
 refuses to install a Flathub copy over one of those, so switch the remote
 for the ones kept and drop the rest (Extensions is GNOME-Shell-only, Text
-Editor and Characters duplicate DMS's notepad and emoji picker):
+Editor and Characters duplicate DMS's notepad and emoji picker). Uninstall
+then install rather than `--reinstall`: Flatpak compares commit timestamps
+and refuses a Flathub build older than the Fedora one. App data in
+`~/.var/app` survives the uninstall.
 
 ```bash
 flatpak uninstall -y org.gnome.Extensions org.gnome.TextEditor org.gnome.Characters org.gnome.Contacts org.gnome.Connections org.gnome.Logs
-flatpak install -y --reinstall flathub $(flatpak list --app --columns=application,origin | awk '$2=="fedora"{print $1}')
+keep=$(flatpak list --app --columns=application,origin | awk '$2=="fedora"{print $1}')
+flatpak uninstall -y $keep && flatpak install -y flathub $keep
 flatpak uninstall -y --unused && flatpak remote-delete fedora
 ```
 
