@@ -14,6 +14,7 @@ include "dms/colors.kdl"
 include "dms/layout.kdl"
 include "dms/alttab.kdl"
 include "dms/binds.kdl"
+include "dms/input.kdl"
 
 input {
     keyboard {
@@ -21,9 +22,17 @@ input {
         }
         numlock
     }
+    // Pointing-device sections don't merge, so this block replaces the
+    // touchpad block from dms/input.kdl (included above). Keep the DMS
+    // values in sync here. clickfinger: the Elan clickpad's bottom-right
+    // software-button area otherwise turns presses into right clicks; now a
+    // one-finger press/tap is always left, two fingers right, three middle.
     touchpad {
         tap
+        accel-speed 0.0
         natural-scroll
+        dwt
+        click-method "clickfinger"
     }
 }
 
@@ -151,4 +160,3 @@ binds {
 include "dms/windowrules.kdl"
 include "dms/cursor.kdl"
 include "dms/outputs.kdl"
-include "dms/input.kdl"
