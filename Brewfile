@@ -56,6 +56,8 @@ brew "sesh"
 brew "starship"
 # Terminal multiplexer
 brew "tmux"
+# Synchronize calendars and contacts
+brew "vdirsyncer"
 # Language Server for Yaml Files
 brew "yaml-language-server"
 # Linter for YAML files
