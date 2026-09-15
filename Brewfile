@@ -12,6 +12,8 @@ brew "cilium-cli"
 brew "cmctl"
 # Modern, maintained replacement for ls
 brew "eza"
+# Program that can automate interactive applications
+brew "expect"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Command-line fuzzy finder written in Go
