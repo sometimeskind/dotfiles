@@ -68,16 +68,18 @@ environment {
 // Clipboard history for the DMS clipboard widget.
 spawn-at-startup "bash" "-c" "wl-paste --watch cliphist store &"
 
-// Apps to open fullscreen on login. at-startup=true limits the fullscreen
-// rule to windows opened within ~60s of niri starting, so launching either
-// app later (Mod+B etc.) opens a normal window.
+// Apps to open maximized-to-edges on login. Not fullscreen: niri draws a
+// focused fullscreen window over floating windows, hiding e.g. the 1Password
+// prompt. at-startup=true limits the rule to windows opened within ~60s of
+// niri starting, so launching either app later (Mod+B etc.) opens a normal
+// window.
 spawn-at-startup "alacritty"
 spawn-at-startup "flatpak" "run" "app.zen_browser.zen"
 
 window-rule {
     match at-startup=true app-id="^Alacritty$"
     match at-startup=true app-id="^(zen|app\\.zen_browser\\.zen)$"
-    open-fullscreen true
+    open-maximized-to-edges true
 }
 
 // Quickshell surfaces (DMS) render inside the overview backdrop.
