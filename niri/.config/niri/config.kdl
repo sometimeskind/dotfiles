@@ -80,6 +80,9 @@ window-rule {
     match at-startup=true app-id="^Alacritty$"
     match at-startup=true app-id="^(zen|app\\.zen_browser\\.zen)$"
     open-maximized-to-edges true
+    // Zen restores its saved "normal" sizemode after opening, which
+    // un-maximizes it; a full-width column keeps it filling the screen.
+    default-column-width { proportion 1.0; }
 }
 
 // Quickshell surfaces (DMS) render inside the overview backdrop.
