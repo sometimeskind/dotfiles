@@ -36,6 +36,13 @@ input {
     }
 }
 
+// Middle-click pastes the last selection rather than the clipboard, which in
+// a terminal is a good way to run half a line someone highlighted. The
+// clipboard (and the DMS clipboard widget) is unaffected.
+clipboard {
+    disable-primary
+}
+
 layout {
     gaps 8
     // Cancel the outer gaps (screen edges); keep the 8px between windows.
@@ -53,6 +60,16 @@ layout {
     }
     default-column-width { proportion 0.5; }
     focus-ring { off; }
+    // With the focus ring off, nothing separates a column from the backdrop
+    // or from the column behind it in the overview. Values from zirconium's
+    // layout include.
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
 }
 
 environment {
@@ -83,6 +100,20 @@ window-rule {
     // Zen restores its saved "normal" sizemode after opening, which
     // un-maximizes it; a full-width column keeps it filling the screen.
     default-column-width { proportion 1.0; }
+}
+
+// Keep window content inside its (rounded) geometry instead of bleeding past
+// the corners.
+window-rule {
+    clip-to-geometry true
+}
+
+// Zen's picture-in-picture window is a normal window to niri, so it opens as
+// a tiled column and pushes the video out of the way of whatever you moved to
+// PiP to keep watching.
+window-rule {
+    match app-id="^(zen|app\\.zen_browser\\.zen)$" title="^Picture-in-Picture$"
+    open-floating true
 }
 
 // Quickshell surfaces (DMS) render inside the overview backdrop.
@@ -170,6 +201,11 @@ binds {
     Alt+Print { screenshot-window; }
     Shift+Print hotkey-overlay-title="Region → annotate (swappy)" { spawn "bash" "-c" "grim -g \"$(slurp)\" - | swappy -f -"; }
     Mod+Print hotkey-overlay-title="Decode QR on screen → clipboard" { spawn "bash" "-c" "grim -g \"$(slurp)\" - | zbarimg --quiet --raw - | wl-copy --trim-newline"; }
+    // zirconium's zocr polls the filesystem because it screenshots over
+    // niri's IPC, which returns before the file is written; grim writes to the
+    // pipe synchronously, so the whole thing is one line. tesseract reads and
+    // writes stdin/stdout when both arguments are "-".
+    Mod+Shift+Print hotkey-overlay-title="OCR region → clipboard" { spawn "bash" "-c" "grim -g \"$(slurp)\" - | tesseract - - | wl-copy --trim-newline"; }
 
     Mod+Shift+E { quit; }
     Mod+Shift+P { power-off-monitors; }

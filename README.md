@@ -177,6 +177,10 @@ keys) live in the generated `dms/binds.kdl`; `niri/.config/niri/config.kdl`
 only defines compositor and app binds. If niri ever reports a duplicate bind
 between the two, the generated file wins — remove ours.
 
+The capture binds (`Shift+Print` region → swappy, `Mod+Print` QR → clipboard,
+`Mod+Shift+Print` OCR → clipboard) use `grim`/`slurp`/`swappy`/`zbar`/
+`tesseract` from the OS image, not the Brewfile.
+
 DMS settings themselves live in `~/.config/DankMaterialShell/settings.json`,
 tracked by the `dms` package. Change them in the DMS settings UI or by hand
 (DMS watches the file and hot-reloads it), then commit the diff; the file only
