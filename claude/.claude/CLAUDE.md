@@ -28,9 +28,11 @@ Applies to all projects. Project-level `CLAUDE.md` files take precedence where t
 Beyond the built-in confirmation for destructive and hard-to-reverse actions, confirm before:
 
 - modifying CI/CD, removing dependencies, modifying shared infra
-- closing or commenting on PRs, creating, closing or commenting on tickets, sending messages, posting externally
+- closing or commenting on PRs or tickets, sending messages, posting externally
 
 Opening a PR on your own pushed branch needs no confirmation: open it as soon as the branch is pushed, so CI runs and review can start early. Mark it draft if the work is unfinished.
+
+Creating a ticket in the project's own tracker needs no confirmation either: file it as soon as the work or finding needs one, and show its URL. Search for an existing ticket first rather than filing a duplicate.
 
 Authorization for one instance does not cover future instances. When you hit an obstacle, find the root cause. Investigate unexpected state before acting on it: it may be in-progress work.
 
