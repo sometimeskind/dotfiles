@@ -1,0 +1,20 @@
+#!/bin/sh
+# Exit 0 when a 1Password desktop-app approval prompt can be answered right
+# now, i.e. someone is at the unlocked workstation. Used by ~/.ssh/config and
+# .zshrc to avoid prompts that would land on a locked screen and hang the
+# command (SSH/mosh sessions, and multiplexer panes started at login and later
+# attached remotely, which inherit a local-looking environment).
+
+# No desktop app agent (headless boxes): nothing to prompt with.
+[ -S "$HOME/.1password/agent.sock" ] || exit 1
+# A shell that is itself an SSH/mosh session (mosh-server inherits it).
+[ -z "${SSH_CONNECTION-}" ] || exit 1
+# macOS: no logind lock signal; the checks above are all we have.
+command -v loginctl >/dev/null 2>&1 || exit 0
+
+# The session in the foreground on the physical seat must be ours and
+# unlocked. DMS reports its lock screen to logind as LockedHint.
+s=$(loginctl show-seat seat0 -p ActiveSession --value 2>/dev/null)
+[ -n "$s" ] || exit 1
+[ "$(loginctl show-session "$s" -p User --value 2>/dev/null)" = "$(id -u)" ] || exit 1
+[ "$(loginctl show-session "$s" -p LockedHint --value 2>/dev/null)" = no ]
