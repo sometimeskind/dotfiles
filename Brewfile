@@ -28,6 +28,8 @@ brew "gnupg"
 brew "helm"
 # Static analysis tool for Kubernetes YAML files and Helm charts
 brew "kube-linter"
+# CloudNativePG plugin for kubectl
+brew "kubectl-cnpg"
 # Kubernetes command-line interface
 brew "kubernetes-cli"
 # Kubernetes controller and tool for one-way encrypted Secrets
