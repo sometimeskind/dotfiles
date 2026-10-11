@@ -4,7 +4,7 @@
       "Bash(git restore:*)"
     ]
   },
-  "model": "fable[1m]",
+  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -174,22 +174,27 @@
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": false,
     "context7@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": false,
     "hookify@claude-plugins-official": false,
     "learning-output-style@claude-plugins-official": false,
-    "mattpocock-skills@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": false,
     "plugin-dev@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": false,
+    "pyright-lsp@claude-plugins-official": false,
+    "ralph-loop@claude-plugins-official": false,
     "security-guidance@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": false,
     "superpowers@claude-plugins-official": false
   },
   "feedbackDrafts": "off",
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "theme": "auto",
   "autoMode": {
@@ -199,7 +204,8 @@
       "Bash(kubectl apply --dry-run=client:*)",
       "Bash(kubectl port-forward -n sealed-secrets svc/sealed-secrets:*)",
       "Bash(gh pr checks:*)",
-      "Bash(terraform -chdir=talos fmt -check -recursive)"
+      "Bash(terraform -chdir=talos fmt -check -recursive)",
+      "Bash(gh pr diff:*)"
     ],
     "soft_deny": [
       "$defaults",
@@ -207,10 +213,5 @@
       "Bash(talosctl upgrade:*)",
       "Bash(kubectl delete -n argocd:*)"
     ]
-  },
-  "modelSettings": {
-    "claude-fable-5-1": {
-      "effortLevel": "high"
-    }
   }
 }
