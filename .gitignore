@@ -39,3 +39,6 @@ niri/.config/niri/dms/*.kdl
 # (browser theme CSS, first-launch/changelog markers, plugins) is derived.
 dms/.config/DankMaterialShell/*
 !dms/.config/DankMaterialShell/settings.json
+
+# Skills synced down from claude.ai at runtime (per-account IDs) — not config
+claude/.claude/skills/synced/
