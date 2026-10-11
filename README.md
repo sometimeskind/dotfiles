@@ -348,6 +348,19 @@ Headless boxes (no desktop app, so no biometric unlock) fall back to a scoped
 read-only **service account** token at `~/.config/op/service-account-token`
 (0600, placed by hand) — see the comment in `.zshrc`.
 
+**Remote sessions (SSH/mosh, e.g. Moshi from a phone)** never touch the
+desktop app: its approval prompt would land on the workstation's locked screen
+and hang the command. With `SSH_CONNECTION` set (mosh-server inherits it):
+
+- `~/.ssh/config` skips the 1Password `IdentityAgent`, so outbound ssh uses a
+  forwarded agent (`ssh -A` — approvals then appear on the device in your
+  hand) or none. Git needs no agent: remotes are HTTPS via `GH_TOKEN`.
+- `.zshrc` uses the service-account token if present (the same file as on
+  headless boxes; on a desktop machine it is used only in remote shells) and
+  otherwise skips `op` entirely. op shell plugins are not loaded.
+- Caveat: a tmux session started at the desk and attached over SSH has no
+  `SSH_CONNECTION` in its existing shells, so those can still prompt.
+
 ## Updating
 
 ```bash

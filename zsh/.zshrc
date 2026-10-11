@@ -43,14 +43,25 @@ alias yolo="aptup && brewup && flatup && pipxup"
 
 # Lazy-load secrets from 1Password before the first command
 if command -v op &>/dev/null; then
-  # Headless boxes (no desktop app, WebAuthn 2FA unusable in op CLI) use a
-  # scoped service account: token placed by hand at this path (0600), granting
-  # read-only access to the pilot-infra vault only.
-  if [[ -f $HOME/.config/op/service-account-token ]]; then
+  # In SSH/mosh sessions (mosh-server inherits SSH_CONNECTION) the desktop
+  # app's authorization prompt would pop up on the workstation's locked screen,
+  # invisible to the remote user, and op blocks until it times out. Remote
+  # shells therefore never use desktop integration: service account or nothing.
+  [[ -n $SSH_CONNECTION ]] && _op_remote=true || _op_remote=false
+  # Headless boxes (no desktop app, WebAuthn 2FA unusable in op CLI), and
+  # remote shells on desktop machines, use a scoped service account: token
+  # placed by hand at this path (0600), granting read-only access to the
+  # pilot-infra vault only. Local desktop shells keep using the app so op
+  # shell plugins can still reach the Personal vault.
+  if [[ -f $HOME/.config/op/service-account-token ]] &&
+     { $_op_remote || [[ ! -S $HOME/.1password/agent.sock ]]; }; then
     OP_SERVICE_ACCOUNT_TOKEN="$(<"$HOME/.config/op/service-account-token")"
     export OP_SERVICE_ACCOUNT_TOKEN
   fi
+  # Remote with no service account: skip loading (gh/git HTTPS then need
+  # another auth source) rather than hang on an invisible prompt.
   _op_secrets_loaded=false
+  $_op_remote && [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && _op_secrets_loaded=true
   _load_op_secrets() {
     if ! $_op_secrets_loaded; then
       _op_secrets_loaded=true
@@ -73,8 +84,10 @@ if command -v op &>/dev/null; then
   add-zsh-hook preexec _load_op_secrets
 
   # op shell plugins (op plugin init <tool>) — wrap CLIs so their tokens
-  # come from 1Password per invocation instead of living on disk.
-  [[ -f $HOME/.config/op/plugins.sh ]] && source "$HOME/.config/op/plugins.sh"
+  # come from 1Password per invocation instead of living on disk. Not in
+  # remote shells: each wrapped call would prompt on the desktop, and their
+  # items live outside the service account's vault.
+  ! $_op_remote && [[ -f $HOME/.config/op/plugins.sh ]] && source "$HOME/.config/op/plugins.sh"
 fi
 
 # ── 1Password SSH agent (desktop app, Settings → Developer → SSH agent) ───────
