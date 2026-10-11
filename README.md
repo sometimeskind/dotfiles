@@ -348,18 +348,27 @@ Headless boxes (no desktop app, so no biometric unlock) fall back to a scoped
 read-only **service account** token at `~/.config/op/service-account-token`
 (0600, placed by hand) — see the comment in `.zshrc`.
 
-**Remote sessions (SSH/mosh, e.g. Moshi from a phone)** never touch the
-desktop app: its approval prompt would land on the workstation's locked screen
-and hang the command. With `SSH_CONNECTION` set (mosh-server inherits it):
+**Away from the desk (SSH/mosh, e.g. Moshi from a phone)** nothing may use
+the desktop app: its approval prompt would land on the workstation's locked
+screen and hang the command. `~/.local/bin/op-prompt-ok` (`1password`
+package) decides, per call, whether a prompt can be answered: the agent socket
+exists, the shell is not itself an SSH session (`SSH_CONNECTION`, which
+mosh-server inherits), and the physical seat's session is ours and unlocked
+(DMS reports its lock screen to logind as `LockedHint`). The lock check is
+what covers multiplexer panes started at login and later attached remotely —
+their environment looks local. When it fails:
 
-- `~/.ssh/config` skips the 1Password `IdentityAgent`, so outbound ssh uses a
-  forwarded agent (`ssh -A` — approvals then appear on the device in your
-  hand) or none. Git needs no agent: remotes are HTTPS via `GH_TOKEN`.
-- `.zshrc` uses the service-account token if present (the same file as on
-  headless boxes; on a desktop machine it is used only in remote shells) and
-  otherwise skips `op` entirely. op shell plugins are not loaded.
-- Caveat: a tmux session started at the desk and attached over SSH has no
-  `SSH_CONNECTION` in its existing shells, so those can still prompt.
+- `~/.ssh/config` doesn't use the 1Password agent, and ignores an inherited
+  `SSH_AUTH_SOCK` pointing at it. Outbound ssh uses a forwarded agent
+  (`ssh -A` — approvals then appear on the device in your hand) or none. Git
+  needs no agent: remotes are HTTPS via `GH_TOKEN`.
+- `.zshrc` reads secrets with the service-account token if
+  `~/.config/op/service-account-token` exists (on a desktop machine, only for
+  that read — it is not exported), otherwise skips `op` and retries on the next
+  command. op shell plugin wrappers run the bare CLI instead.
+
+The `1password` package must be stowed wherever `ssh` is: without
+`op-prompt-ok`, ssh on a desktop machine never uses the 1Password agent.
 
 ## Updating
 

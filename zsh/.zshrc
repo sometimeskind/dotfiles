@@ -43,51 +43,74 @@ alias yolo="aptup && brewup && flatup && pipxup"
 
 # Lazy-load secrets from 1Password before the first command
 if command -v op &>/dev/null; then
-  # In SSH/mosh sessions (mosh-server inherits SSH_CONNECTION) the desktop
-  # app's authorization prompt would pop up on the workstation's locked screen,
-  # invisible to the remote user, and op blocks until it times out. Remote
-  # shells therefore never use desktop integration: service account or nothing.
-  [[ -n $SSH_CONNECTION ]] && _op_remote=true || _op_remote=false
-  # Headless boxes (no desktop app, WebAuthn 2FA unusable in op CLI), and
-  # remote shells on desktop machines, use a scoped service account: token
-  # placed by hand at this path (0600), granting read-only access to the
-  # pilot-infra vault only. Local desktop shells keep using the app so op
-  # shell plugins can still reach the Personal vault.
-  if [[ -f $HOME/.config/op/service-account-token ]] &&
-     { $_op_remote || [[ ! -S $HOME/.1password/agent.sock ]]; }; then
-    OP_SERVICE_ACCOUNT_TOKEN="$(<"$HOME/.config/op/service-account-token")"
+  # Desktop-app integration prompts for approval on the workstation screen.
+  # When nobody can answer (SSH/mosh shells, or multiplexer panes started at
+  # login and attached remotely while the screen is locked) op blocks until it
+  # times out. op-prompt-ok (1password package) decides per call, not per
+  # shell, because a long-lived pane outlives where its user is.
+  _op_prompt_ok() { "$HOME/.local/bin/op-prompt-ok" 2>/dev/null; }
+  # Scoped service account: token placed by hand at this path (0600), granting
+  # read-only access to the pilot-infra vault only. Headless boxes (no desktop
+  # app, WebAuthn 2FA unusable in op CLI) export it for all op use; desktop
+  # machines use it only for the one read below when nobody can answer a
+  # prompt, so op shell plugins keep reaching the Personal vault via the app.
+  _op_sa_token=$HOME/.config/op/service-account-token
+  if [[ -f $_op_sa_token && ! -S $HOME/.1password/agent.sock ]]; then
+    OP_SERVICE_ACCOUNT_TOKEN="$(<"$_op_sa_token")"
     export OP_SERVICE_ACCOUNT_TOKEN
   fi
-  # Remote with no service account: skip loading (gh/git HTTPS then need
-  # another auth source) rather than hang on an invisible prompt.
   _op_secrets_loaded=false
-  $_op_remote && [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && _op_secrets_loaded=true
   _load_op_secrets() {
-    if ! $_op_secrets_loaded; then
-      _op_secrets_loaded=true
-      # </dev/null: with no account configured, op read PROMPTS (invisibly,
-      # inside the capture) instead of failing — EOF makes it error out fast.
-      GITHUB_PERSONAL_ACCESS_TOKEN=$(op read "op://pilot-infra/Homelab PAT/token" 2>/dev/null </dev/null)
-      if [[ -n $GITHUB_PERSONAL_ACCESS_TOKEN ]]; then
-        export GITHUB_PERSONAL_ACCESS_TOKEN
-        # gh reads GH_TOKEN, not the name above — export both so gh (and
-        # gh auth setup-git) work with no auth state on disk.
-        export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
+    $_op_secrets_loaded && return
+    local -a sa=()
+    if [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && ! _op_prompt_ok; then
+      if [[ -f $_op_sa_token ]]; then
+        sa=(env "OP_SERVICE_ACCOUNT_TOKEN=$(<"$_op_sa_token")")
       else
-        # Vault not available on this machine — don't export empties that
-        # would shadow gh's own keyring auth.
-        unset GITHUB_PERSONAL_ACCESS_TOKEN
+        # No way to read without a prompt. An SSH shell stays remote, so give
+        # up; a desk shell retries on the next command (screen may unlock).
+        [[ -n $SSH_CONNECTION ]] && _op_secrets_loaded=true
+        return
       fi
+    fi
+    _op_secrets_loaded=true
+    # </dev/null: with no account configured, op read PROMPTS (invisibly,
+    # inside the capture) instead of failing — EOF makes it error out fast.
+    GITHUB_PERSONAL_ACCESS_TOKEN=$("${sa[@]}" op read "op://pilot-infra/Homelab PAT/token" 2>/dev/null </dev/null)
+    if [[ -n $GITHUB_PERSONAL_ACCESS_TOKEN ]]; then
+      export GITHUB_PERSONAL_ACCESS_TOKEN
+      # gh reads GH_TOKEN, not the name above — export both so gh (and
+      # gh auth setup-git) work with no auth state on disk.
+      export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
+    else
+      # Vault not available on this machine — don't export empties that
+      # would shadow gh's own keyring auth.
+      unset GITHUB_PERSONAL_ACCESS_TOKEN
     fi
   }
   autoload -U add-zsh-hook
   add-zsh-hook preexec _load_op_secrets
 
   # op shell plugins (op plugin init <tool>) — wrap CLIs so their tokens
-  # come from 1Password per invocation instead of living on disk. Not in
-  # remote shells: each wrapped call would prompt on the desktop, and their
-  # items live outside the service account's vault.
-  ! $_op_remote && [[ -f $HOME/.config/op/plugins.sh ]] && source "$HOME/.config/op/plugins.sh"
+  # come from 1Password per invocation instead of living on disk. plugins.sh
+  # defines aliases, which expand when the line is parsed — too early to check
+  # who is at the desk — so each becomes a function that decides per call and
+  # runs the bare CLI (its own auth, e.g. GH_TOKEN) when nobody can answer
+  # (headless boxes' exported service account never prompts).
+  if [[ -f $HOME/.config/op/plugins.sh ]]; then
+    source "$HOME/.config/op/plugins.sh"
+    # shellcheck disable=SC2154  # aliases: zsh/parameter builtin
+    for _op_alias in ${(k)aliases}; do
+      _op_cmd=${aliases[$_op_alias]}
+      [[ $_op_cmd == "op plugin run -- "* ]] || continue
+      unalias "$_op_alias"
+      eval "$_op_alias() {
+        if [[ -n \$OP_SERVICE_ACCOUNT_TOKEN ]] || _op_prompt_ok; then op plugin run -- ${(q)_op_cmd#op plugin run -- } \"\$@\"
+        else command ${(q)_op_cmd#op plugin run -- } \"\$@\"; fi
+      }"
+    done
+    unset _op_alias _op_cmd
+  fi
 fi
 
 # ── 1Password SSH agent (desktop app, Settings → Developer → SSH agent) ───────
