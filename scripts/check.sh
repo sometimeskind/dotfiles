@@ -11,6 +11,10 @@ ok()   { echo "  OK  $1"; PASS=$((PASS+1)); }
 fail() { echo " FAIL $1"; FAIL=$((FAIL+1)); }
 skip() { echo " SKIP $1 ($2 not found)"; }
 
+# Only check files git would commit (tracked plus untracked-but-not-ignored),
+# so runtime state that lands in stowed dirs (e.g. ~/.claude) is never scanned.
+repo_files() { git -C "$REPO_ROOT" ls-files -z --cached --others --exclude-standard -- "$@"; }
+
 echo "=== dotfiles checks ==="
 
 # zsh syntax check
@@ -24,7 +28,7 @@ else
   skip "zsh/.zshrc syntax" "zsh"
 fi
 
-# shellcheck (optional, best-effort — zsh isn't bash but catches real bugs)
+# Lint with shellcheck (optional, best-effort — zsh isn't bash but catches real bugs)
 if command -v shellcheck &>/dev/null; then
   if shellcheck --shell=bash --exclude=SC1090,SC1091,SC2296 "$REPO_ROOT/zsh/.zshrc" 2>&1; then
     ok "zsh/.zshrc shellcheck"
@@ -37,8 +41,9 @@ fi
 
 # JSON validation
 if command -v jq &>/dev/null; then
-  for f in $(find "$REPO_ROOT" -name "*.json" -not -path "*/.git/*"); do
-    if jq . "$f" &>/dev/null; then
+  mapfile -d '' -t json_files < <(repo_files '*.json')
+  for f in "${json_files[@]}"; do
+    if jq . "$REPO_ROOT/$f" &>/dev/null; then
       ok "$f (jq)"
     else
       fail "$f (jq)"
@@ -50,8 +55,9 @@ fi
 
 # TOML validation via Python (stdlib in 3.11+)
 if python3 -c "import tomllib" &>/dev/null; then
-  for f in $(find "$REPO_ROOT" -name "*.toml" -not -path "*/.git/*"); do
-    if python3 -c "import tomllib, sys; tomllib.load(open(sys.argv[1],'rb'))" "$f" 2>&1; then
+  mapfile -d '' -t toml_files < <(repo_files '*.toml')
+  for f in "${toml_files[@]}"; do
+    if python3 -c "import tomllib, sys; tomllib.load(open(sys.argv[1],'rb'))" "$REPO_ROOT/$f" 2>&1; then
       ok "$f (tomllib)"
     else
       fail "$f (tomllib)"
@@ -76,15 +82,14 @@ else
 fi
 
 # Secret scan — no plaintext tokens/passwords
-if grep -rn \
+mapfile -d '' -t scan_files < <(repo_files '*.sh' '*.zsh' '*.zshrc' '*.toml' '*.json' '*.conf')
+# shellcheck disable=SC2016  # $ is a literal in the regexes
+if [ "${#scan_files[@]}" -gt 0 ] && (cd "$REPO_ROOT" && grep -n \
     -e 'password\s*=\s*[^$({]' \
     -e 'token\s*=\s*[^$({]' \
     -e 'secret\s*=\s*[^$({]' \
     -e 'api_key\s*=\s*[^$({]' \
-    --include="*.sh" --include="*.zsh" --include="*.zshrc" \
-    --include="*.toml" --include="*.json" --include="*.conf" \
-    --exclude-dir=".git" \
-    "$REPO_ROOT" 2>/dev/null; then
+    -- "${scan_files[@]}" 2>/dev/null); then
   fail "secret scan (possible plaintext credentials found above)"
 else
   ok "secret scan"
