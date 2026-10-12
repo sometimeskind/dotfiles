@@ -62,6 +62,13 @@ if command -v op &>/dev/null; then
   _op_secrets_loaded=false
   _load_op_secrets() {
     $_op_secrets_loaded && return
+    # pilot's agents use the GitHub App sometimeskind-pilot (homelab#2139):
+    # gh-app-token keeps its token in gh's hosts.yml, and an exported
+    # GH_TOKEN would override it with the operator's PAT.
+    if [[ -x $HOME/.local/bin/gh-app-token ]]; then
+      _op_secrets_loaded=true
+      return
+    fi
     local -a sa=()
     if [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && ! _op_prompt_ok; then
       if [[ -f $_op_sa_token ]]; then
