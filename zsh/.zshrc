@@ -99,7 +99,7 @@ if command -v op &>/dev/null; then
     _op_secrets_loaded=true
     # </dev/null: with no account configured, op read PROMPTS (invisibly,
     # inside the capture) instead of failing — EOF makes it error out fast.
-    GITHUB_PERSONAL_ACCESS_TOKEN=$("${sa[@]}" op read "op://pilot-infra/Homelab PAT/token" 2>/dev/null </dev/null)
+    GITHUB_PERSONAL_ACCESS_TOKEN=$("${sa[@]}" op read "op://Personal/GitHub workstation PAT/credential" 2>/dev/null </dev/null)
     if [[ -n $GITHUB_PERSONAL_ACCESS_TOKEN ]]; then
       export GITHUB_PERSONAL_ACCESS_TOKEN
       # gh reads GH_TOKEN, not the name above — export both so gh (and

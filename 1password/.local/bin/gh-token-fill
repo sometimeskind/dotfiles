@@ -11,14 +11,17 @@
 #   gh-token-fill           fill if empty (.zshrc preexec)
 #   gh-token-fill --unlock  same, but at most one 1Password prompt per unlock
 #                           (gh-token-fill.timer, so a token is there before
-#                           you walk away, even if no pane was used)
+#                           you walk away, even if no pane was used). A prompt
+#                           that fails (dismissed, app still locked) is not
+#                           retried by the timer until the next lock and
+#                           unlock; the first shell command still tries.
 #   gh-token-fill --force   re-read now, e.g. after rotating the PAT
 #
 # Exit 0: the token file is in place. 1: nobody can answer a prompt, try
 # again later. 2: the read was tried and failed.
 set -eu
 
-OP_REF=${GH_TOKEN_OP_REF:-op://pilot-infra/Homelab PAT/token}
+OP_REF=${GH_TOKEN_OP_REF:-op://Personal/GitHub workstation PAT/credential}
 RUN_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gh
 HOSTS=$HOME/.config/gh/hosts.yml
 SA_TOKEN_FILE=$HOME/.config/op/service-account-token
@@ -33,10 +36,6 @@ filled() {
 }
 
 link() {
-  if [ -e "$HOSTS" ] && [ ! -L "$HOSTS" ]; then
-    echo "gh-token-fill: $HOSTS is a regular file (gh auth login?); move it away so the token stays off disk" >&2
-    return 2
-  fi
   mkdir -p "${HOSTS%/*}"
   ln -sfn "$RUN_DIR/hosts.yml" "$HOSTS"
 }
@@ -49,6 +48,13 @@ chmod 700 "$RUN_DIR"
 exec 9>"$RUN_DIR/lock"
 ! command -v flock >/dev/null 2>&1 || flock 9
 [ "$mode" = --force ] || ! filled || exit 0
+# A regular hosts.yml (gh auth login) would keep gh on its own auth: fail
+# before prompting, not after, so no read is wasted and the unit stays failed
+# until it is moved away.
+if [ -e "$HOSTS" ] && [ ! -L "$HOSTS" ]; then
+  echo "gh-token-fill: $HOSTS is a regular file (gh auth login?); move it away so the token stays off disk" >&2
+  exit 2
+fi
 # Filled earlier but the symlink was lost: relink, no read needed.
 if [ "$mode" != --force ] && [ -s "$RUN_DIR/hosts.yml" ]; then
   link
