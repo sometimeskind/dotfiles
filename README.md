@@ -378,8 +378,11 @@ their environment looks local. When it fails:
 - `~/.ssh/config` doesn't use the 1Password agent, and ignores an inherited
   `SSH_AUTH_SOCK` pointing at it. Outbound ssh uses a forwarded agent
   (`ssh -A` — approvals then appear on the device in your hand) or none. Git
-  needs no agent: remotes are HTTPS, with the token from gh's tmpfs
-  `hosts.yml` (above).
+  needs no agent as long as GitHub remotes are HTTPS, with the token from
+  gh's tmpfs `hosts.yml` (above). An SSH remote (`git@github.com:…`) fails
+  there with `Permission denied (publickey)`; list them with
+  `for d in ~/src/*/.git; do git -C "${d%/.git}" remote get-url origin; done | grep '^git@'`
+  and switch each with `git remote set-url origin https://github.com/<owner>/<repo>.git`.
 - `gh-token-fill` reads the token with the service-account token if
   `~/.config/op/service-account-token` exists (on a desktop machine, only for
   that read — it is not exported), otherwise leaves it to the next unlock or
