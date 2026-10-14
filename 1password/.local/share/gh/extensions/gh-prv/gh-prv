@@ -1,0 +1,26 @@
+#!/bin/sh
+# gh prv [<number> | <url> | <branch>] [-R <owner/repo>]: gh pr view for a
+# fine-grained PAT (sometimeskind/homelab#2178).
+#
+# gh pr view always asks for the PR's check-run rollup, and a fine-grained PAT
+# can't be granted Checks, so on the workstation it fails with "Resource not
+# accessible by personal access token". This asks only for fields the PAT can
+# read, and takes CI from the Actions API (Actions: read) instead.
+#
+# A plain directory under gh's extensions dir is a working extension, so
+# stowing it is the whole install.
+set -eu
+
+gh pr view "$@" --json number,title,state,isDraft,author,url,baseRefName,headRefName,reviewDecision,latestReviews,mergeStateStatus,body --template \
+'{{.title}} #{{.number}}
+{{.state}}{{if .isDraft}} (draft){{end}} · {{.author.login}} wants to merge {{.headRefName}} into {{.baseRefName}}
+Reviews:{{range .latestReviews}} {{.author.login}} {{.state}}{{else}} none{{end}}{{with .reviewDecision}} ({{.}}){{end}} · Merge state: {{.mergeStateStatus}}
+{{.url}}
+
+{{.body}}
+'
+
+ref=$(gh pr view "$@" --json url,headRefOid --jq '(.url | split("/")[3:5] | join("/")) + " " + .headRefOid')
+printf '\nCI (Actions):\n'
+gh api "repos/${ref% *}/actions/runs?head_sha=${ref#* }" \
+  --jq 'if .total_count == 0 then "  none" else .workflow_runs[] | "  \(.name): \(.conclusion // .status)" end'

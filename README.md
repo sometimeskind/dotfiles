@@ -347,10 +347,14 @@ The goal is that no long-lived credential lives on disk:
   `hosts.yml`. Don't use `gh auth login`/`switch`/`logout`: they may replace
   the symlink with a regular file on disk (with auto-login, nothing unlocks
   a keyring either). After rotating the PAT, run `gh-token-fill --force`.
+  `gh pr view` fails with this PAT ("Resource not accessible by personal
+  access token": it always asks for check runs, and a fine-grained PAT can't
+  be granted Checks), so use `gh prv`, an extension in the same package that
+  reads the rest and takes CI from the Actions API.
   Setup, once per machine:
 
   ```bash
-  mkdir -p ~/.config/systemd/user ~/.config/gh  # keeps Stow from folding them
+  mkdir -p ~/.config/systemd/user ~/.config/gh ~/.local/share/gh/extensions  # keeps Stow from folding them
   make stow PKG=1password
   systemctl --user daemon-reload
   systemctl --user enable --now gh-token-fill.timer
