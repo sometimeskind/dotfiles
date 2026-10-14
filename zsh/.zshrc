@@ -69,6 +69,22 @@ if command -v op &>/dev/null; then
       _op_secrets_loaded=true
       return
     fi
+    # Where gh-token-fill (1password package) is installed, the token lives in
+    # gh's hosts.yml on tmpfs (homelab#2178), so a new pane opened remotely
+    # while the screen is locked has it too, once this or the unlock timer has
+    # filled it. GH_TOKEN stays unset: it would override hosts.yml.
+    if [[ -x $HOME/.local/bin/gh-token-fill && -n $XDG_RUNTIME_DIR ]]; then
+      "$HOME/.local/bin/gh-token-fill" 2>/dev/null
+      case $? in
+        0) _op_secrets_loaded=true
+           # For tools that read this name rather than asking gh.
+           GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token 2>/dev/null) &&
+             export GITHUB_PERSONAL_ACCESS_TOKEN ;;
+        2) _op_secrets_loaded=true ;;  # read failed: don't prompt on every command
+        *) ;;                          # nobody can answer: retry next command
+      esac
+      return
+    fi
     local -a sa=()
     if [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && ! _op_prompt_ok; then
       if [[ -f $_op_sa_token ]]; then

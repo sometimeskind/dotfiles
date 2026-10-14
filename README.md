@@ -336,9 +336,26 @@ The goal is that no long-lived credential lives on disk:
   everywhere. The local `id_ed25519_sk` file is only a handle, not a secret
   — a resident key regenerates it on any machine with `ssh-keygen -K`, so
   there is nothing to back up or sync.
-- **GitHub**: `GH_TOKEN` is read from 1Password lazily on first command
-  (see `_load_op_secrets` in `.zshrc`) — prefer this over `gh auth login`,
-  which stores a token in the keyring/hosts file.
+- **GitHub**: the token lives in gh's own `hosts.yml`, but on tmpfs:
+  `~/.config/gh/hosts.yml` is a symlink to `$XDG_RUNTIME_DIR/gh/hosts.yml`,
+  filled from 1Password by `~/.local/bin/gh-token-fill` (`1password`
+  package). Every pane, including one opened over mosh while the screen is
+  locked, and git (via `gh auth git-credential`) read it, and it is gone at
+  logout or reboot. A user timer fills it within a minute of an unlock (one
+  1Password prompt per unlock, none once filled); `.zshrc` also fills it on the
+  first command as a fallback. `GH_TOKEN` stays unset, since it overrides
+  `hosts.yml`. Don't use `gh auth login`/`switch`/`logout`: they may replace
+  the symlink with a regular file on disk (with auto-login, nothing unlocks
+  a keyring either). After rotating the PAT, run `gh-token-fill --force`.
+  Setup, once per machine:
+
+  ```bash
+  mkdir -p ~/.config/systemd/user ~/.config/gh  # keeps Stow from folding them
+  make stow PKG=1password
+  systemctl --user daemon-reload
+  systemctl --user enable --now gh-token-fill.timer
+  gh auth setup-git   # git uses gh's token for HTTPS remotes
+  ```
 - **Other CLIs**: use [op shell plugins](https://developer.1password.com/docs/cli/shell-plugins/)
   (`op plugin init <tool>`) — `.zshrc` sources `~/.config/op/plugins.sh` when
   present. The plugins file only contains aliases, no secrets, and stays
@@ -361,11 +378,13 @@ their environment looks local. When it fails:
 - `~/.ssh/config` doesn't use the 1Password agent, and ignores an inherited
   `SSH_AUTH_SOCK` pointing at it. Outbound ssh uses a forwarded agent
   (`ssh -A` — approvals then appear on the device in your hand) or none. Git
-  needs no agent: remotes are HTTPS via `GH_TOKEN`.
-- `.zshrc` reads secrets with the service-account token if
+  needs no agent: remotes are HTTPS, with the token from gh's tmpfs
+  `hosts.yml` (above).
+- `gh-token-fill` reads the token with the service-account token if
   `~/.config/op/service-account-token` exists (on a desktop machine, only for
-  that read — it is not exported), otherwise skips `op` and retries on the next
-  command. op shell plugin wrappers run the bare CLI instead.
+  that read — it is not exported), otherwise leaves it to the next unlock or
+  command. Once it is filled, no `op` call is needed. op shell plugin wrappers
+  run the bare CLI instead.
 
 The `1password` package must be stowed wherever `ssh` is: without
 `op-prompt-ok`, ssh on a desktop machine never uses the 1Password agent.

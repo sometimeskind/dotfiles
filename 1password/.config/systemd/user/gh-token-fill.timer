@@ -1,0 +1,11 @@
+[Unit]
+Description=Fill gh's tmpfs token file after login or unlock (homelab#2178)
+
+[Timer]
+# Polls for an unlocked desk. A no-op once the file is filled, and at most one
+# 1Password prompt per unlock, so this is quiet.
+OnCalendar=*:*:00
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
