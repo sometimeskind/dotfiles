@@ -21,7 +21,7 @@
 # again later. 2: the read was tried and failed.
 set -eu
 
-OP_REF=${GH_TOKEN_OP_REF:-op://pilot-infra/Homelab PAT/token}
+OP_REF=${GH_TOKEN_OP_REF:-op://Personal/GitHub workstation PAT/credential}
 RUN_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gh
 HOSTS=$HOME/.config/gh/hosts.yml
 SA_TOKEN_FILE=$HOME/.config/op/service-account-token
