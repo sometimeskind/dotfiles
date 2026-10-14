@@ -77,12 +77,16 @@ else
 fi
 
 # </dev/null: with no account configured, op read prompts on the terminal
-# instead of failing; EOF makes it error out fast.
-token=$(op read "$OP_REF" 2>/dev/null </dev/null) || token=
+# instead of failing; EOF makes it error out fast. op's stderr never holds the
+# secret: keep it so a failed read says why (dismissed, timed out, locked) in
+# the journal, not just that it failed.
+token=$(op read "$OP_REF" 2>"$RUN_DIR/op-error" </dev/null) || token=
 if [ -z "$token" ]; then
   echo "gh-token-fill: could not read $OP_REF" >&2
+  sed 's/^/gh-token-fill: op: /' "$RUN_DIR/op-error" >&2
   exit 2
 fi
+rm -f "$RUN_DIR/op-error"
 user=$(GH_TOKEN=$token gh api user --jq .login 2>/dev/null) || user=
 
 # Top-level oauth_token/user is the form gh reads for a token in hosts.yml
