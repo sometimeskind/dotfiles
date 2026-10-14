@@ -1,0 +1,9 @@
+[Unit]
+Description=Fill gh's tmpfs token file once the desk is unlocked (homelab#2178)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/gh-token-fill --unlock
+Environment=PATH=%h/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+# 1 = screen locked or app not running yet: expected, try again next minute.
+SuccessExitStatus=1
