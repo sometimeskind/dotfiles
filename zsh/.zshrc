@@ -52,8 +52,9 @@ if command -v op &>/dev/null; then
   # Scoped service account: token placed by hand at this path (0600), granting
   # read-only access to the pilot-infra vault only. Headless boxes (no desktop
   # app, WebAuthn 2FA unusable in op CLI) export it for all op use; desktop
-  # machines use it only for the one read below when nobody can answer a
-  # prompt, so op shell plugins keep reaching the Personal vault via the app.
+  # machines leave it to gh-token-fill, which uses it only when nobody can
+  # answer a prompt, so op shell plugins keep reaching the Personal vault via
+  # the app.
   _op_sa_token=$HOME/.config/op/service-account-token
   if [[ -f $_op_sa_token && ! -S $HOME/.1password/agent.sock ]]; then
     OP_SERVICE_ACCOUNT_TOKEN="$(<"$_op_sa_token")"
@@ -69,47 +70,19 @@ if command -v op &>/dev/null; then
       _op_secrets_loaded=true
       return
     fi
-    # Where gh-token-fill (1password package) is installed, the token lives in
-    # gh's hosts.yml on tmpfs (homelab#2178), so a new pane opened remotely
-    # while the screen is locked has it too, once this or the unlock timer has
-    # filled it. GH_TOKEN stays unset: it would override hosts.yml.
-    if [[ -x $HOME/.local/bin/gh-token-fill && -n $XDG_RUNTIME_DIR ]]; then
-      "$HOME/.local/bin/gh-token-fill" 2>/dev/null
-      case $? in
-        0) _op_secrets_loaded=true
-           # For tools that read this name rather than asking gh.
-           GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token 2>/dev/null) &&
-             export GITHUB_PERSONAL_ACCESS_TOKEN ;;
-        2) _op_secrets_loaded=true ;;  # read failed: don't prompt on every command
-        *) ;;                          # nobody can answer: retry next command
-      esac
+    # Elsewhere the token lives in gh's hosts.yml on tmpfs (homelab#2178), so
+    # a new pane opened remotely while the screen is locked has it too, once
+    # this or the unlock timer has filled it. GH_TOKEN stays unset: it would
+    # override hosts.yml.
+    if [[ ! -x $HOME/.local/bin/gh-token-fill || -z $XDG_RUNTIME_DIR ]]; then
+      _op_secrets_loaded=true
       return
     fi
-    local -a sa=()
-    if [[ -z $OP_SERVICE_ACCOUNT_TOKEN ]] && ! _op_prompt_ok; then
-      if [[ -f $_op_sa_token ]]; then
-        sa=(env "OP_SERVICE_ACCOUNT_TOKEN=$(<"$_op_sa_token")")
-      else
-        # No way to read without a prompt. An SSH shell stays remote, so give
-        # up; a desk shell retries on the next command (screen may unlock).
-        [[ -n $SSH_CONNECTION ]] && _op_secrets_loaded=true
-        return
-      fi
-    fi
-    _op_secrets_loaded=true
-    # </dev/null: with no account configured, op read PROMPTS (invisibly,
-    # inside the capture) instead of failing — EOF makes it error out fast.
-    GITHUB_PERSONAL_ACCESS_TOKEN=$("${sa[@]}" op read "op://Personal/GitHub workstation PAT/credential" 2>/dev/null </dev/null)
-    if [[ -n $GITHUB_PERSONAL_ACCESS_TOKEN ]]; then
-      export GITHUB_PERSONAL_ACCESS_TOKEN
-      # gh reads GH_TOKEN, not the name above — export both so gh (and
-      # gh auth setup-git) work with no auth state on disk.
-      export GH_TOKEN="$GITHUB_PERSONAL_ACCESS_TOKEN"
-    else
-      # Vault not available on this machine — don't export empties that
-      # would shadow gh's own keyring auth.
-      unset GITHUB_PERSONAL_ACCESS_TOKEN
-    fi
+    "$HOME/.local/bin/gh-token-fill" 2>/dev/null
+    case $? in
+      0|2) _op_secrets_loaded=true ;;  # 2: read failed, don't prompt on every command
+      *) ;;                            # nobody can answer: retry next command
+    esac
   }
   autoload -U add-zsh-hook
   add-zsh-hook preexec _load_op_secrets
@@ -200,5 +173,3 @@ if command -v nvim &>/dev/null; then
   alias vi=nvim
   export EDITOR="nvim"
 fi
-
-alias c='claude --worktree'
