@@ -76,10 +76,7 @@ if command -v op &>/dev/null; then
     if [[ -x $HOME/.local/bin/gh-token-fill && -n $XDG_RUNTIME_DIR ]]; then
       "$HOME/.local/bin/gh-token-fill" 2>/dev/null
       case $? in
-        0) _op_secrets_loaded=true
-           # For tools that read this name rather than asking gh.
-           GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token 2>/dev/null) &&
-             export GITHUB_PERSONAL_ACCESS_TOKEN ;;
+        0) _op_secrets_loaded=true ;;
         2) _op_secrets_loaded=true ;;  # read failed: don't prompt on every command
         *) ;;                          # nobody can answer: retry next command
       esac
