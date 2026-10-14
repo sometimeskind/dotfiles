@@ -173,5 +173,3 @@ if command -v nvim &>/dev/null; then
   alias vi=nvim
   export EDITOR="nvim"
 fi
-
-alias c='claude --worktree'
