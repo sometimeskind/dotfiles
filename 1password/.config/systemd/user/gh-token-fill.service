@@ -1,9 +1,12 @@
 [Unit]
-Description=Fill gh's tmpfs token file once the desk is unlocked (homelab#2178)
+Description=Fill gh's tmpfs token and pilot's sftp key once the desk is unlocked (homelab#2178, #2220)
 
 [Service]
 Type=oneshot
 ExecStart=%h/.local/bin/gh-token-fill --unlock
+# Second, so its read normally needs no prompt of its own: one approval covers
+# op for a while. Skipped when the first one fails (dismissed prompt).
+ExecStart=%h/.local/bin/pilot-key-fill --unlock
 Environment=PATH=%h/.local/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
 # 1 = screen locked or app not running yet: expected, try again next minute.
 SuccessExitStatus=1

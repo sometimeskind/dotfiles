@@ -360,6 +360,23 @@ The goal is that no long-lived credential lives on disk:
   systemctl --user enable --now gh-token-fill.timer
   gh auth setup-git   # git uses gh's token for HTTPS remotes
   ```
+- **pilot from a remote shell**: the 1Password agent is off over mosh, so
+  `scp` to pilot would fail. `~/.local/bin/pilot-key-fill` (`1password`
+  package) copies a dedicated key, `op://Personal/pilot sftp key`, to
+  `$XDG_RUNTIME_DIR/ssh/pilot-sftp`. It runs from the same unit, right after
+  `gh-token-fill`, so it usually needs no prompt of its own, and the key is
+  gone at logout or reboot. `~/.ssh/config` offers the key to `pilot`; pilot
+  accepts it for sftp only (`ucore/pilot-bootstrap.sh` in homelab), so `scp`
+  and `sftp` work and `ssh pilot` from a remote shell is refused. At the desk
+  the agent key is offered first, so `ssh pilot` works there as before. To
+  create or rotate the key (the public key goes into the bootstrap; re-run
+  that step on pilot):
+
+  ```bash
+  op item create --vault Personal --category 'SSH Key' --title 'pilot sftp key' --ssh-generate-key ed25519 --tags homelab
+  op read 'op://Personal/pilot sftp key/public key'
+  pilot-key-fill --force
+  ```
 - **Other CLIs**: use [op shell plugins](https://developer.1password.com/docs/cli/shell-plugins/)
   (`op plugin init <tool>`) — `.zshrc` sources `~/.config/op/plugins.sh` when
   present. The plugins file only contains aliases, no secrets, and stays

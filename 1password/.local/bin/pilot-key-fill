@@ -1,0 +1,57 @@
+#!/bin/sh
+# Put pilot's sftp key on tmpfs (sometimeskind/homelab#2220).
+#
+# The 1Password SSH agent needs an approval at the desk, so a mosh session
+# can't reach pilot with it. This key can: ~/.ssh/config offers
+# $XDG_RUNTIME_DIR/ssh/pilot-sftp for pilot, and pilot accepts it for sftp
+# only (scp and sftp work; no shell). Gone at logout or reboot, like
+# gh-token-fill's token, and filled by the same unit right after it, so the
+# read normally rides on that unlock's approval.
+#
+#   pilot-key-fill           fill if empty
+#   pilot-key-fill --unlock  same, but at most one prompt per unlock (the timer)
+#   pilot-key-fill --force   re-read now, e.g. after rotating the key
+#
+# Exit 0: the key file is in place. 1: nobody can answer a prompt, try again
+# later. 2: the read was tried and failed.
+set -eu
+
+OP_REF=${PILOT_KEY_OP_REF:-op://Personal/pilot sftp key/private key?ssh-format=openssh}
+RUN_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/ssh
+KEY=$RUN_DIR/pilot-sftp
+TRIED=$RUN_DIR/tried-this-unlock
+mode=${1-}
+
+# pilot itself needs no key to reach pilot.
+[ ! -x "$HOME/.local/bin/gh-app-token" ] || exit 0
+[ "$mode" = --force ] || [ ! -s "$KEY" ] || exit 0
+
+mkdir -p "$RUN_DIR"
+chmod 700 "$RUN_DIR"
+
+# No service-account fallback: the key is in the Personal vault, which no
+# service account can read.
+if "$HOME/.local/bin/op-prompt-ok" 2>/dev/null; then
+  if [ "$mode" = --unlock ]; then
+    [ ! -e "$TRIED" ] || exit 1
+    : >"$TRIED"
+  fi
+else
+  [ "$mode" != --unlock ] || rm -f "$TRIED"
+  exit 1
+fi
+
+# Written whole and renamed so ssh never reads half a key. op's stderr never
+# holds the secret: keep it so a failed read says why in the journal.
+(
+  umask 077
+  op read "$OP_REF" >"$KEY.tmp" 2>"$RUN_DIR/op-error" </dev/null || :
+)
+if [ ! -s "$KEY.tmp" ]; then
+  rm -f "$KEY.tmp"
+  echo "pilot-key-fill: could not read $OP_REF" >&2
+  sed 's/^/pilot-key-fill: op: /' "$RUN_DIR/op-error" >&2
+  exit 2
+fi
+rm -f "$RUN_DIR/op-error"
+mv "$KEY.tmp" "$KEY"
