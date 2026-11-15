@@ -37,8 +37,8 @@ niri/.config/niri/dms/*.kdl
 # (one symlink) because DMS saves atomically via temp file + rename, which
 # would replace a file-level symlink. Everything else DMS drops next to it
 # (browser theme CSS, first-launch/changelog markers, plugins) is derived.
-dms/.config/DankMaterialShell/*
-!dms/.config/DankMaterialShell/settings.json
+dms/.config/dms/*
+!dms/.config/dms/settings.json
 
 # Skills synced down from claude.ai at runtime (per-account IDs) — not config
 claude/.claude/skills/synced/

@@ -103,15 +103,15 @@ else with Homebrew-on-Linux, and stow only the headless packages (`zsh`,
 `starship`, `bat`, `claude`, `nvim`; skip `tmux` and `ghostty`). The full
 bootstrap for the `pilot` box is documented in `homelab/ucore/README.md`.
 
-### Fedora Atomic laptop (niri + DankMaterialShell)
+### Fedora Atomic laptop (niri + Dux Shell)
 
 The laptop runs an immutable Fedora — the custom
 [ublue-niri](https://github.com/sometimeskind/ublue-niri) bootc image
 (Universal Blue `base-main`, i.e. DE-less; not Bluefin) with the
 [niri](https://github.com/niri-wm/niri) compositor and
-[DankMaterialShell](https://danklinux.com/docs/dankmaterialshell) (DMS) as the
-desktop shell. `niri`, DMS, `wl-clipboard`/`cliphist` (clipboard widget), and
-the Ptyxis terminal (dconf-configured, nothing to stow) all come baked into
+[Dux Shell](https://duxlabs.dev/docs/dms/overview) (DMS, formerly
+DankMaterialShell) as the desktop shell. `niri`, DMS,
+`wl-clipboard`/`cliphist` (clipboard widget), and the Ptyxis terminal (dconf-configured, nothing to stow) all come baked into
 the OS image, as is the Nautilus file manager (not on Flathub, needs host
 gvfs). The other GNOME core apps are Flathub Flatpaks in the Brewfile — the
 current GNOME defaults, not their GTK3-era predecessors: Loupe (images, was
@@ -164,11 +164,11 @@ done
 rm -f ~/.config/niri/config.kdl ~/.zshrc
 make stow PKG=niri
 
-# 5. DMS settings. DMS's first launch also creates ~/.config/DankMaterialShell;
+# 5. DMS settings. DMS's first launch also creates ~/.config/dms;
 #    remove it so the tracked directory folds into a single symlink (DMS saves
 #    settings.json atomically, temp file + rename, so a file-level symlink
 #    would be replaced by a plain file on the first change):
-rm -rf ~/.config/DankMaterialShell
+rm -rf ~/.config/dms
 make stow PKG=dms
 ```
 
@@ -181,12 +181,31 @@ The capture binds (`Shift+Print` region → swappy, `Mod+Print` QR → clipboard
 `Mod+Shift+Print` OCR → clipboard) use `grim`/`slurp`/`swappy`/`zbar`/
 `tesseract` from the OS image, not the Brewfile.
 
-DMS settings themselves live in `~/.config/DankMaterialShell/settings.json`,
-tracked by the `dms` package. Change them in the DMS settings UI or by hand
+DMS settings themselves live in `~/.config/dms/settings.json`, tracked by
+the `dms` package. Change them in the DMS settings UI or by hand
 (DMS watches the file and hot-reloads it), then commit the diff; the file only
 holds values that differ from defaults. The other files DMS writes in that
 directory (browser theme CSS, first-launch markers) are gitignored, and the
 niri includes under `~/.config/niri/dms/` are regenerated from it.
+
+Before Dux Shell 2.0 the directory was `~/.config/DankMaterialShell`. On
+first run 2.x moves it to `~/.config/dms` and leaves a symlink at the old
+path; for a stow-folded directory it only adds `~/.config/dms ->
+DankMaterialShell`. A machine stowed before the rename needs a one-time
+re-stow:
+
+```bash
+systemctl --user stop dms
+cd ~/src/dotfiles
+make unstow PKG=dms      # before pulling, while stow still owns the old link
+git pull
+rm ~/.config/dms         # the upstream migration symlink; fails if it's a real dir
+# derived files (theme CSS, markers) are gitignored, so git left them behind:
+mv dms/.config/DankMaterialShell/* dms/.config/dms/ 2>/dev/null
+rmdir dms/.config/DankMaterialShell
+make stow PKG=dms
+systemctl --user start dms
+```
 
 ### macOS
 
