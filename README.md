@@ -195,16 +195,19 @@ DankMaterialShell`. A machine stowed before the rename needs a one-time
 re-stow:
 
 ```bash
-systemctl --user stop dms
+systemctl --user stop dms   # it rewrites settings.json while running
 cd ~/src/dotfiles
+# commit any settings.json changes first; the pull renames the file:
+git status --short dms/
 make unstow PKG=dms      # before pulling, while stow still owns the old link
 git pull
 rm ~/.config/dms         # the upstream migration symlink; fails if it's a real dir
 # derived files (theme CSS, markers) are gitignored, so git left them behind:
-mv dms/.config/DankMaterialShell/* dms/.config/dms/ 2>/dev/null
+find dms/.config/DankMaterialShell -mindepth 1 -maxdepth 1 -exec mv -n {} dms/.config/dms/ \;
 rmdir dms/.config/DankMaterialShell
 make stow PKG=dms
 systemctl --user start dms
+dms-greeter sync         # the greeter's read access was on the old dir
 ```
 
 ### macOS
