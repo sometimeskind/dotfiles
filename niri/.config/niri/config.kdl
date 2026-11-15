@@ -1,14 +1,14 @@
 // niri config — starter for the Bluefin/Fedora Atomic laptop.
 //
-// DankMaterialShell (DMS) provides the desktop shell layer (bar, spotlight
-// launcher, notifications, lock screen, OSD). The four include files below
+// Dux Shell (DMS, formerly DankMaterialShell) provides the desktop shell
+// layer (bar, spotlight launcher, notifications, lock screen, OSD). The four include files below
 // are gitignored machine state (colors regenerate from the wallpaper);
 // generate them BEFORE stowing this config — see README "Fedora Atomic
 // laptop" step 3: per-file `dms setup` subcommands, skipping files the
 // running shell already created. Bare `dms setup` would overwrite this
 // file through the stow symlink. Our binds block below wins over duplicates in
 // the generated dms/binds.kdl (niri includes are last-wins).
-// Docs: https://danklinux.com/docs/dankmaterialshell/compositors
+// Docs: https://duxlabs.dev/docs/dms/compositors
 
 include "dms/colors.kdl"
 include "dms/layout.kdl"
