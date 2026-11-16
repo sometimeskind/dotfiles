@@ -7,6 +7,7 @@ Applies to all projects. Project-level `CLAUDE.md` files take precedence where t
 - Bias toward action: when asked to make a change, make it rather than describing it.
 - For non-trivial tasks, state a brief plan with verifiable success criteria before implementing ("write a failing test for the bug, then make it pass"), not "make it work".
 - If multiple interpretations exist, present them rather than picking one silently.
+- Before advising from an external project, blog post or doc, read its actual source or repo. A summary or memory of it is not enough.
 - Boy Scout: when you spot nearby improvements, raise them. Don't make unrelated changes silently.
 - Surface risks and downsides, not only the reasons an approach is good.
 - Never answer your own confirmation questions. If you ask "should I proceed?", wait.
@@ -34,7 +35,16 @@ Opening a PR on your own pushed branch needs no confirmation: open it as soon as
 
 Creating a ticket in the project's own tracker needs no confirmation either: file it as soon as the work or finding needs one, and show its URL. Search for an existing ticket first rather than filing a duplicate.
 
+A bare "ok" approves only the single action just proposed. For posting comments, merging, or applying infra changes, state the exact command and wait for explicit approval. Auto mode may still block these: hand the command over rather than retrying.
+
 Authorization for one instance does not cover future instances. When you hit an obstacle, find the root cause. Investigate unexpected state before acting on it: it may be in-progress work.
+
+## Background Watchers and CI Waits
+
+- Wait with the Monitor tool (an until-loop) or `gh run watch`, not hand-rolled `sleep` loops. `gh pr checks --watch` needs Checks read access, which a fine-grained PAT can't have.
+- A wait loop exits only on a terminal state (success, failure or cancelled), never on pending, queued or an empty result. Give it a timeout: a run can sit queued forever.
+- Before starting a background watcher, check none is already running for the same target. Never run duplicates.
+- `pgrep -f pattern` run inside a shell or script also matches that shell's own command line, so it always finds something; use `pgrep -f '[p]attern'`.
 
 ## Shell Commands
 
