@@ -27,3 +27,12 @@ fi
 # otherwise falls back to the client's — which uCore (C.utf8 only) rarely has.
 # Guarded so terminals that already export LANG (macOS) are left alone.
 export LANG="${LANG:-C.UTF-8}"
+
+# ── mosh-server: exit once the client is gone (homelab#2929) ──────────────────
+# Moshi starts a new mosh session on every reconnect and never resumes the old
+# one, so each reconnect left a mosh-server (plus an attached herdr client)
+# behind: 97 in a day on pilot, enough to lag typing. mosh-server exits after
+# this many seconds without a packet from its client. It is not an idle
+# timeout, so a connected session never expires. A laptop asleep for longer
+# loses its mosh session; herdr keeps the tabs, so reconnect and reattach.
+export MOSH_SERVER_NETWORK_TMOUT=3600
