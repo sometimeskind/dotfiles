@@ -29,6 +29,7 @@ claude/.claude/*
 !claude/.claude/hooks/
 !claude/.claude/settings.json
 !claude/.claude/skills/
+!claude/.claude/statusline.sh
 
 # DMS-generated niri include files — machine state written by dms setup, not config
 niri/.config/niri/dms/*.kdl
