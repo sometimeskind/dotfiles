@@ -17,6 +17,14 @@ DO NOT TRIGGER when: user asks to review backlog health or issue quality across 
    gh issue list --state open --assignee sometimeskind --json number,title,body,labels,updatedAt
    ```
 
+   **If the repo has `scripts/backlog-queue.py`** (homelab, sometimeskind/homelab#3001), run it instead: it prints who each open issue waits on. There the operator's work is what waits on them, so recommend from those states and skip steps 2 and 3:
+   - `review`: a PR to review. These come first, oldest PR first: each one unblocks finished work.
+   - `needs-design`: a decision. Read the comment that lists the options and present them.
+   - `needs-operator`: a manual step. Read the comment that lists the steps.
+   - Never recommend a `parked` issue. A `queue` issue is the agents' to progress: mention how many there are, and recommend one only if the user asks for something to build.
+
+   Only the operator removes a state label; offer the `gh issue edit <N> --remove-label <label>` command once the decision or step is done.
+
 2. **Filter to actionable issues** — skip any that:
    - Have no acceptance criteria (can't tell when done)
    - Have open blocking questions in the body or comments, including unresolved `[NEEDS CLARIFICATION: …]` markers
