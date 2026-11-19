@@ -70,6 +70,14 @@
             "async": true
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/context-budget.sh"
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -161,6 +169,14 @@
             "type": "command",
             "command": "command -v moshi-hook >/dev/null && moshi-hook claude-hook || true",
             "async": true
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/context-budget.sh"
           }
         ]
       }
