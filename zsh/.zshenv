@@ -36,3 +36,10 @@ export LANG="${LANG:-C.UTF-8}"
 # timeout, so a connected session never expires. A laptop asleep for longer
 # loses its mosh session; herdr keeps the tabs, so reconnect and reattach.
 export MOSH_SERVER_NETWORK_TMOUT=3600
+# Moshi launches mosh-server through `env MOSH_SERVER_NETWORK_TMOUT=86400 …`,
+# which overrides the line above for its servers. With this one set, SIGUSR1
+# makes a mosh-server exit only once its client has been silent this long; a
+# connected server ignores it. Unset, SIGUSR1 kills even a connected server.
+# pilot's mosh-server-reaper timer (homelab ucore/pilot-bootstrap.sh) sends
+# SIGUSR1, and only to servers that carry this variable.
+export MOSH_SERVER_SIGNAL_TMOUT=3600
