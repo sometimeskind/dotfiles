@@ -19,11 +19,10 @@ DO NOT TRIGGER when: user asks to review backlog health or issue quality across 
 
    **If the repo has `scripts/backlog-queue.py`** (homelab, sometimeskind/homelab#3001), run it instead: it prints who each open issue waits on. There the operator's work is what waits on them, so recommend from those states and skip steps 2 and 3:
    - `review`: a PR to review. These come first, oldest PR first: each one unblocks finished work.
-   - `needs-design`: a decision. Read the comment that lists the options and present them.
-   - `needs-operator`: a manual step. Read the comment that lists the steps.
+   - `operator`: the board has an open item for the operator on the issue (a decision or a manual step). Read the items with the board's `list_items` tool, and present each one's options or command with its ID. Without the board's tools in the session, say that the items are in the claude.ai Factory Board connector.
    - Never recommend a `parked` issue. A `queue` issue is the agents' to progress: mention how many there are, and recommend one only if the user asks for something to build.
 
-   Only the operator removes a state label; offer the `gh issue edit <N> --remove-label <label>` command once the decision or step is done.
+   Only the operator closes an item, with a verb in the claude.ai connector (Done, Answer, Reply, Reject); a session can't close one and never runs an item's command itself.
 
 2. **Filter to actionable issues** — skip any that:
    - Have no acceptance criteria (can't tell when done)
