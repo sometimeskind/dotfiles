@@ -62,7 +62,7 @@ grep -qE "${GH}issue[[:space:]]+(close|reopen|delete|edit|transfer|pin|unpin|loc
 
 # --- write actions while an infra window is open: the operator may be mid-apply
 if [[ -d "/run/user/$(id -u)/infra-session" ]]; then
-  grep -qE "${CP}(kubectl[[:space:]]+delete|git[[:space:]]+(-C[[:space:]]+[^[:space:]]+[[:space:]]+)?(push|commit)|gh[[:space:]]+(pr|issue)[[:space:]]+(create|comment)|[^[:space:]]*agent-merge\.sh)" <<<"$BARE" \
+  grep -qE "${CP}(kubectl[[:space:]]+delete|git[[:space:]]+(-C[[:space:]]+[^[:space:]]+[[:space:]]+)?(push|commit)|gh[[:space:]]+(pr|issue)[[:space:]]+(create|comment)|[^[:space:]]*agent-(merge|delete)\.sh)" <<<"$BARE" \
     && deny "an infra session window is open (/run/user/$(id -u)/infra-session) — no write actions; log a verdict of skipped reason=infra-window-open and stop"
 fi
 

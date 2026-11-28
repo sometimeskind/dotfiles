@@ -4,7 +4,7 @@
       "Bash(git restore:*)"
     ]
   },
-  "model": "opus",
+  "model": "fable",
   "hooks": {
     "Notification": [
       {
@@ -193,6 +193,9 @@
   "modelSettings": {
     "claude-fable-5-1": {
       "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
     }
   },
   "tui": "fullscreen",
@@ -205,13 +208,18 @@
       "Bash(kubectl port-forward -n sealed-secrets svc/sealed-secrets:*)",
       "Bash(gh pr checks:*)",
       "Bash(terraform -chdir=talos fmt -check -recursive)",
-      "Bash(gh pr diff:*)"
+      "Bash(gh pr diff:*)",
+      "Bash(gh run view:*)",
+      "Read-only GET requests with gh api to repos/sometimeskind/homelab/actions/runs and the paths below it (list runs, view a run, its jobs or its logs). Not with -X or --method other than GET, not with -f, -F, --field, --raw-field or --input, and not rerun, cancel or delete"
     ],
     "soft_deny": [
       "$defaults",
       "Bash(talosctl upgrade-k8s:*)",
       "Bash(talosctl upgrade:*)",
-      "Bash(kubectl delete -n argocd:*)"
+      "Bash(kubectl delete -n argocd:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(helm upgrade:*)"
     ]
   },
   "env": {
