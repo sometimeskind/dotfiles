@@ -210,7 +210,7 @@
       "Bash(terraform -chdir=talos fmt -check -recursive)",
       "Bash(gh pr diff:*)",
       "Bash(gh run view:*)",
-      "Bash(gh api repos/sometimeskind/homelab/actions/runs*)"
+      "Read-only GET requests with gh api to repos/sometimeskind/homelab/actions/runs and the paths below it (list runs, view a run, its jobs or its logs). Not with -X or --method other than GET, not with -f, -F, --field, --raw-field or --input, and not rerun, cancel or delete"
     ],
     "soft_deny": [
       "$defaults",
