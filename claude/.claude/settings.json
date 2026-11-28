@@ -70,14 +70,6 @@
             "async": true
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/context-budget.sh"
-          }
-        ]
       }
     ],
     "PreToolUse": [
@@ -171,14 +163,6 @@
             "async": true
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/context-budget.sh"
-          }
-        ]
       }
     ]
   },
@@ -229,5 +213,8 @@
       "Bash(talosctl upgrade:*)",
       "Bash(kubectl delete -n argocd:*)"
     ]
+  },
+  "env": {
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "400000"
   }
 }
